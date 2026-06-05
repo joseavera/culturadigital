@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propósito Formativo 4 — Estadística y Datos | Cultura Digital II</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════════════════ */
+:root {
+  --bg:       #faf9f6;
+  --bg2:      #f2f0eb;
+  --bg3:      #e8e4dc;
+  --ink:      #1a1814;
+  --ink2:     #4a4640;
+  --ink3:     #8a867e;
+  --rule:     #d8d2c8;
+  --acc:      #c0392b;   /* rojo editorial */
+  --acc2:     #e74c3c;
+  --acc-bg:   rgba(192,57,43,.08);
+  --teal:     #0d7c66;
+  --teal-bg:  rgba(13,124,102,.08);
+  --gold:     #b5860d;
+  --gold-bg:  rgba(181,134,13,.10);
+  --blue:     #1a5276;
+  --blue-bg:  rgba(26,82,118,.08);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --ease:     cubic-bezier(.4,0,.2,1);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════════════════════════════
+   STAGE
+══════════════════════════════════════════════════════════ */
+#stage {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  padding: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SLIDE BASE
+══════════════════════════════════════════════════════════ */
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 960px;
+  aspect-ratio: 16 / 9;
+  background: var(--bg);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  animation: slideIn .35s var(--ease);
+}
+
+.slide.active { display: flex; flex-direction: column; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Línea decorativa superior */
+.slide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--acc);
+  z-index: 10;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FOOTER COMÚN
+══════════════════════════════════════════════════════════ */
+.slide-footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 32px;
+  background: var(--bg2);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.sf-left  { display: flex; align-items: center; gap: 14px; }
+.sf-right { color: var(--acc); font-weight: 500; }
+
+.sf-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  display: inline-block;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SLIDE 1 — PORTADA
+══════════════════════════════════════════════════════════ */
+#s1 {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+#s1::before { background: var(--acc); }
+
+.s1-inner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 64px 32px;
+  gap: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Patrón de puntos de fondo */
+.s1-bg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Número grande decorativo */
+.s1-deco {
+  font-family: var(--font-display);
+  font-size: 220px;
+  font-weight: 900;
+  color: rgba(255,255,255,.04);
+  position: absolute;
+  right: 40px;
+  bottom: -20px;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.s1-content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+}
+
+.s1-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--acc2);
+  background: rgba(192,57,43,.15);
+  border: 1px solid rgba(192,57,43,.3);
+  border-radius: 3px;
+  padding: 4px 12px;
+  margin-bottom: 20px;
+}
+
+.s1-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.s1-title em {
+  font-style: italic;
+  color: var(--acc2);
+}
+
+.s1-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  max-width: 420px;
+}
+
+.s1-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.s1-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 3px;
+  padding: 4px 10px;
+  letter-spacing: .06em;
+}
+
+#s1 .slide-footer {
+  background: rgba(255,255,255,.04);
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: rgba(255,255,255,.3);
+}
+#s1 .sf-dot { background: var(--acc2); }
+#s1 .sf-right { color: var(--acc2); }
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT ESTÁNDAR (slides 2-10)
+══════════════════════════════════════════════════════════ */
+.s-header {
+  padding: 26px 36px 18px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.sh-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--acc);
+  font-weight: 500;
+  letter-spacing: .1em;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.sh-texts { flex: 1; }
+
+.sh-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 3px;
+}
+
+.sh-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.sh-title em { font-style: italic; color: var(--acc); }
+
+.s-body {
+  flex: 1;
+  padding: 20px 36px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  overflow: hidden;
+}
+
+/* ── Definición destacada ── */
+.def-box {
+  background: var(--acc-bg);
+  border: 1px solid rgba(192,57,43,.2);
+  border-left: 4px solid var(--acc);
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.65;
+}
+
+.def-box strong { color: var(--ink); }
+.def-box .def-kw {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--acc);
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ── Grilla de tarjetas ── */
+.card-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.card-grid.cols2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols4 { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.55;
+  position: relative;
+}
+
+.card.accent  { border-top: 3px solid var(--acc);  background: var(--acc-bg);  }
+.card.teal    { border-top: 3px solid var(--teal); background: var(--teal-bg); }
+.card.gold    { border-top: 3px solid var(--gold); background: var(--gold-bg); }
+.card.blue    { border-top: 3px solid var(--blue); background: var(--blue-bg); }
+
+.card-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.card.accent .card-label { color: var(--acc);  }
+.card.teal   .card-label { color: var(--teal); }
+.card.gold   .card-label { color: var(--gold); }
+.card.blue   .card-label { color: var(--blue); }
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.card strong { color: var(--ink); }
+
+/* ── Fórmula / número grande ── */
+.formula-big {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--acc);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+}
+
+.formula-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 14px 20px;
+}
+
+.formula-box .fb-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 4px;
+}
+
+.fb-sep {
+  width: 1px; height: 40px;
+  background: var(--rule);
+  flex-shrink: 0;
+}
+
+/* ── Pasos / lista numerada ── */
+.step-list { display: flex; flex-direction: column; gap: 8px; }
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--acc);
+  background: var(--acc-bg);
+  border: 1px solid rgba(192,57,43,.2);
+  min-width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-item strong { color: var(--ink); }
+
+/* ── Ejemplo con datos ── */
+.data-set {
+  background: var(--ink);
+  border-radius: 5px;
+  padding: 12px 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #e8e4dc;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.data-set .ds-label {
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  margin-right: 4px;
+}
+
+.data-val {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 3px;
+  padding: 2px 10px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.data-val.hi {
+  background: rgba(192,57,43,.3);
+  border-color: rgba(192,57,43,.5);
+  color: var(--acc2);
+}
+
+.data-val.med {
+  background: rgba(13,124,102,.3);
+  border-color: rgba(13,124,102,.5);
+  color: #2ecc71;
+}
+
+/* ── Tabla ── */
+.ev-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  color: var(--ink2);
+}
+
+.ev-table th {
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.ev-table th:first-child { border-radius: 4px 0 0 0; }
+.ev-table th:last-child  { border-radius: 0 4px 0 0; }
+
+.ev-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  line-height: 1.45;
+}
+
+.ev-table tr:last-child td { border-bottom: none; }
+.ev-table tr:nth-child(even) td { background: var(--bg2); }
+.ev-table td strong { color: var(--ink); }
+.ev-table td .t-acc { color: var(--acc); font-family: var(--font-mono); font-weight: 500; }
+
+/* ── Callout / cita resaltada ── */
+.callout {
+  background: var(--teal-bg);
+  border: 1px solid rgba(13,124,102,.2);
+  border-left: 4px solid var(--teal);
+  border-radius: 4px;
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+.callout strong { color: var(--ink); }
+.callout .cl-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* ── Gráfica de barras SVG ── */
+.chart-wrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bar-fill {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  transition: height .5s var(--ease);
+}
+
+.bar-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink3);
+  text-align: center;
+  letter-spacing: .04em;
+}
+
+.bar-val {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ── Dos columnas ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  flex: 1;
+}
+
+.two-col.asym { grid-template-columns: 1.2fr 1fr; }
+
+/* ── Slide de cierre ── */
+#s10 {
+  background: var(--ink);
+  color: #fff;
+}
+#s10::before { background: var(--teal); }
+
+.s10-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 64px;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.s10-bg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.s10-icon {
+  font-size: 48px;
+  position: relative;
+  z-index: 2;
+}
+
+.s10-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.s10-title em { font-style: italic; color: var(--acc2); }
+
+.s10-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,.5);
+  max-width: 420px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+}
+
+.s10-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  margin-top: 6px;
+}
+
+.s10-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 14px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.s10-pill.r { color: var(--acc2); border-color: rgba(192,57,43,.4); background: rgba(192,57,43,.12); }
+.s10-pill.g { color: #2ecc71;    border-color: rgba(46,204,113,.4); background: rgba(46,204,113,.1); }
+.s10-pill.b { color: #5dade2;    border-color: rgba(93,173,226,.4); background: rgba(93,173,226,.1); }
+.s10-pill.y { color: #f1c40f;    border-color: rgba(241,196,15,.4); background: rgba(241,196,15,.1); }
+
+#s10 .slide-footer {
+  background: rgba(255,255,255,.04);
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: rgba(255,255,255,.3);
+}
+#s10 .sf-dot { background: var(--teal); }
+#s10 .sf-right { color: #2ecc71; }
+
+/* ══════════════════════════════════════════════════════════
+   CONTROLES DE NAVEGACIÓN
+══════════════════════════════════════════════════════════ */
+#nav {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 100;
+  background: rgba(0,0,0,.6);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 40px;
+  padding: 8px 16px;
+  backdrop-filter: blur(10px);
+}
+
+.nav-btn {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.8);
+  border-radius: 50%;
+  width: 34px; height: 34px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+
+.nav-btn:hover:not(:disabled) { background: rgba(255,255,255,.18); color: #fff; }
+.nav-btn:disabled { opacity: .25; cursor: default; }
+
+#slide-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  min-width: 52px;
+  text-align: center;
+  letter-spacing: .06em;
+}
+
+/* Miniaturas de progreso */
+#dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.dot.on { background: var(--acc2); width: 16px; border-radius: 3px; }
+
+/* Atajo de teclado tooltip */
+#key-hint {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .08em;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 2s;
+}
+
+#key-hint.hidden { opacity: 0; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ══ SLIDE 1 — PORTADA ══════════════════════════════ -->
+  <div class="slide active" id="s1">
+    <div class="s1-inner">
+      <div class="s1-bg"></div>
+      <div class="s1-deco">∑</div>
+      <div class="s1-content">
+        <div class="s1-tag">
+          <span>📊</span> Propósito Formativo 4 · Cultura Digital II
+        </div>
+        <h1 class="s1-title">
+          Organización y análisis<br>
+          de <em>datos estadísticos</em>
+        </h1>
+        <p class="s1-sub">
+          Medidas de tendencia central · Representación gráfica de datos ·
+          Interpretación y análisis digital
+        </p>
+        <div class="s1-chips">
+          <span class="s1-chip">Media aritmética</span>
+          <span class="s1-chip">Moda</span>
+          <span class="s1-chip">Mediana</span>
+          <span class="s1-chip">Rango</span>
+          <span class="s1-chip">Gráficas estadísticas</span>
+          <span class="s1-chip">2do Semestre · Bachillerato</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left">
+        <span class="sf-dot"></span>
+        <span>Cultura Digital II · Aprendizaje individual y colaborativo</span>
+      </div>
+      <div class="sf-right">01 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2 — ¿QUÉ SON LOS DATOS? ════════════════ -->
+  <div class="slide" id="s2">
+    <div class="s-header">
+      <div class="sh-num">02</div>
+      <div class="sh-texts">
+        <div class="sh-label">Punto de partida</div>
+        <h2 class="sh-title">¿Qué son los <em>datos</em> y para qué sirven?</h2>
+      </div>
+    </div>
+    <div class="s-body">
+      <div class="def-box">
+        <span class="def-kw">Datos estadísticos</span>
+        Son valores numéricos o categóricos que recopilamos para <strong>describir una situación, identificar patrones</strong> y tomar decisiones informadas. En la era digital, procesamos datos todo el tiempo: calificaciones, temperatura, seguidores, ventas, votos…
+      </div>
+      <div class="card-grid cols3">
+        <div class="card accent">
+          <div class="card-label">Datos numéricos</div>
+          <div class="card-title">Cuantitativos</div>
+          Representan cantidades medibles: edades, temperaturas, calificaciones, precios.
+        </div>
+        <div class="card teal">
+          <div class="card-label">Datos categóricos</div>
+          <div class="card-title">Cualitativos</div>
+          Describen características o grupos: colores, géneros, tipos de especie, opiniones.
+        </div>
+        <div class="card gold">
+          <div class="card-label">¿Para qué analizarlos?</div>
+          <div class="card-title">Tomar decisiones</div>
+          Resumir, comparar y visualizar datos nos permite <strong>entender la realidad</strong> y actuar.
+        </div>
+      </div>
+      <div class="callout">
+        <span class="cl-label">📌 Conexión con el propósito</span>
+        En este propósito analizaremos datos usando <strong>medidas de tendencia central</strong> y aprenderemos a representarlos con <strong>gráficas digitales</strong> en herramientas como hojas de cálculo colaborativas.
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Datos y estadística</span></div>
+      <div class="sf-right">02 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3 — MEDIDAS DE TENDENCIA CENTRAL ════════ -->
+  <div class="slide" id="s3">
+    <div class="s-header">
+      <div class="sh-num">03</div>
+      <div class="sh-texts">
+        <div class="sh-label">Concepto clave</div>
+        <h2 class="sh-title">Medidas de <em>tendencia central</em></h2>
+      </div>
+    </div>
+    <div class="s-body">
+      <div class="def-box">
+        Son valores únicos que <strong>representan o resumen un conjunto de datos</strong>. Nos dicen dónde se "concentra" la mayor parte de la información — el centro del conjunto.
+      </div>
+      <div class="card-grid cols3">
+        <div class="card accent">
+          <div class="card-label">📐 Medida 1</div>
+          <div class="card-title" style="font-size:22px">Media</div>
+          El <strong>promedio</strong> de todos los valores. Se suman todos y se dividen entre la cantidad de datos.
+        </div>
+        <div class="card teal">
+          <div class="card-label">📍 Medida 2</div>
+          <div class="card-title" style="font-size:22px">Mediana</div>
+          El valor del <strong>centro</strong> cuando los datos están ordenados de menor a mayor.
+        </div>
+        <div class="card gold">
+          <div class="card-label">🔁 Medida 3</div>
+          <div class="card-title" style="font-size:22px">Moda</div>
+          El valor que <strong>más se repite</strong> en el conjunto de datos. Puede haber más de una.
+        </div>
+      </div>
+      <div class="callout">
+        <span class="cl-label">💡 Recuerda</span>
+        Media, mediana y moda son las tres <strong>medidas de tendencia central</strong>. El <strong>rango</strong> no es una medida de tendencia central — es una medida de dispersión que indica qué tan alejados están los datos extremos.
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Medidas de tendencia central</span></div>
+      <div class="sf-right">03 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4 — LA MEDIA ════════════════════════════ -->
+  <div class="slide" id="s4">
+    <div class="s-header">
+      <div class="sh-num">04</div>
+      <div class="sh-texts">
+        <div class="sh-label">Medida de tendencia central</div>
+        <h2 class="sh-title">La <em>media aritmética</em> — el promedio</h2>
+      </div>
+    </div>
+    <div class="s-body">
+      <div class="two-col asym">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="step-list">
+            <div class="step-item">
+              <span class="step-num">1</span>
+              <span><strong>Suma</strong> todos los valores del conjunto de datos.</span>
+            </div>
+            <div class="step-item">
+              <span class="step-num">2</span>
+              <span><strong>Divide</strong> la suma entre la cantidad total de datos.</span>
+            </div>
+            <div class="step-item">
+              <span class="step-num">3</span>
+              <span>El resultado es el valor <strong>promedio</strong> del conjunto.</span>
+            </div>
+          </div>
+          <div class="formula-box">
+            <div>
+              <div class="fb-label">Fórmula</div>
+              <div class="formula-big">x̄ = Σx ÷ n</div>
+            </div>
+            <div class="fb-sep"></div>
+            <div style="font-size:12px;color:var(--ink3);line-height:1.6;">
+              <strong>Σx</strong> = suma de todos los valores<br>
+              <strong>n</strong> = cantidad de datos<br>
+              <strong>x̄</strong> = media (promedio)
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="callout" style="border-color:rgba(192,57,43,.2);border-left-color:var(--acc);background:var(--acc-bg);">
+            <span class="cl-label" style="color:var(--acc);">📊 Ejemplo del diagnóstico</span>
+            Datos: <strong>4, 6, 8, 10, 12</strong>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Suma:</span>
+            <span class="data-val">4+6+8+10+12 = 40</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">n =</span>
+            <span class="data-val">5 datos</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Media =</span>
+            <span class="data-val hi">40 ÷ 5 = 8</span>
+          </div>
+          <div class="card teal" style="font-size:12px;padding:10px 14px;">
+            <strong>La media de 4, 6, 8, 10 y 12 es <span style="color:var(--teal);font-size:15px;">8</span></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Media aritmética</span></div>
+      <div class="sf-right">04 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 5 — LA MODA ═════════════════════════════ -->
+  <div class="slide" id="s5">
+    <div class="s-header">
+      <div class="sh-num">05</div>
+      <div class="sh-texts">
+        <div class="sh-label">Medida de tendencia central</div>
+        <h2 class="sh-title">La <em>moda</em> — el valor más frecuente</h2>
+      </div>
+    </div>
+    <div class="s-body">
+      <div class="two-col">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="def-box">
+            <span class="def-kw">Moda</span>
+            Es el valor que <strong>aparece con mayor frecuencia</strong> en un conjunto de datos. No requiere ningún cálculo aritmético, solo <strong>contar repeticiones</strong>.
+          </div>
+          <div class="card gold" style="font-size:12px;">
+            <div class="card-label">Tipos de conjuntos</div>
+            <strong>Unimodal:</strong> un solo valor se repite más.<br>
+            <strong>Bimodal:</strong> dos valores se repiten por igual.<br>
+            <strong>Sin moda:</strong> todos los valores aparecen solo una vez.
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="callout" style="border-color:rgba(192,57,43,.2);border-left-color:var(--acc);background:var(--acc-bg);">
+            <span class="cl-label" style="color:var(--acc);">📊 Ejemplo del diagnóstico</span>
+            Datos: <strong>3, 5, 3, 8, 9, 3</strong>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Conteo:</span>
+            <span class="data-val">3 → aparece 3 veces</span>
+            <span class="data-val">5 → 1 vez</span>
+            <span class="data-val">8 → 1 vez</span>
+            <span class="data-val">9 → 1 vez</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Moda =</span>
+            <span class="data-val hi">3</span>
+          </div>
+          <div class="card teal" style="font-size:12px;padding:10px 14px;">
+            El <strong>3</strong> se repite <span style="color:var(--teal);font-size:15px;">3 veces</span> — es el más frecuente.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Moda</span></div>
+      <div class="sf-right">05 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 6 — LA MEDIANA ══════════════════════════ -->
+  <div class="slide" id="s6">
+    <div class="s-header">
+      <div class="sh-num">06</div>
+      <div class="sh-texts">
+        <div class="sh-label">Medida de tendencia central</div>
+        <h2 class="sh-title">La <em>mediana</em> — el valor central</h2>
+      </div>
+    </div>
+    <div class="s-body">
+      <div class="two-col">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="step-list">
+            <div class="step-item">
+              <span class="step-num">1</span>
+              <span><strong>Ordena</strong> los datos de menor a mayor.</span>
+            </div>
+            <div class="step-item">
+              <span class="step-num">2</span>
+              <span>Si hay un número <strong>impar</strong> de datos, la mediana es el valor del centro.</span>
+            </div>
+            <div class="step-item">
+              <span class="step-num">3</span>
+              <span>Si hay un número <strong>par</strong> de datos, la mediana es el promedio de los dos valores centrales.</span>
+            </div>
+          </div>
+          <div class="callout">
+            <span class="cl-label">💡 Clave</span>
+            La mediana <strong>no se ve afectada por valores extremos</strong> (outliers). Por eso es útil cuando hay datos muy alejados del resto.
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="callout" style="border-color:rgba(192,57,43,.2);border-left-color:var(--acc);background:var(--acc-bg);">
+            <span class="cl-label" style="color:var(--acc);">📊 Ejemplo del diagnóstico</span>
+            Datos ordenados: <strong>7, 9, 11, 13, 15</strong>
+          </div>
+          <div class="data-set">
+            <span class="data-val">7</span>
+            <span class="data-val">9</span>
+            <span class="data-val med">11 ← centro</span>
+            <span class="data-val">13</span>
+            <span class="data-val">15</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">n = 5 (impar)</span>
+            <span class="ds-label">posición central = 3</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Mediana =</span>
+            <span class="data-val hi">11</span>
+          </div>
+          <div class="card teal" style="font-size:12px;padding:10px 14px;">
+            Hay <strong>2 valores antes</strong> y <strong>2 valores después</strong> del 11 — es el centro exacto.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Mediana</span></div>
+      <div class="sf-right">06 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7 — EL RANGO ════════════════════════════ -->
+  <div class="slide" id="s7">
+    <div class="s-header">
+      <div class="sh-num">07</div>
+      <div class="sh-texts">
+        <div class="sh-label">Medida de dispersión</div>
+        <h2 class="sh-title">El <em>rango</em> — amplitud de los datos</h2>
+      </div>
+    </div>
+    <div class="s-body">
+      <div class="two-col asym">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="def-box" style="border-left-color:var(--blue);background:var(--blue-bg);border-color:rgba(26,82,118,.2);">
+            <span class="def-kw" style="color:var(--blue);">Rango</span>
+            Indica <strong>qué tan dispersos están los datos</strong>. Se obtiene restando el valor mínimo al valor máximo. <em>No es una medida de tendencia central</em>, sino de <strong>dispersión</strong>.
+          </div>
+          <div class="formula-box">
+            <div>
+              <div class="fb-label">Fórmula</div>
+              <div class="formula-big" style="color:var(--blue);">R = Máx − Mín</div>
+            </div>
+          </div>
+          <div class="card blue">
+            <div class="card-label">¿Para qué sirve?</div>
+            Un rango <strong>grande</strong> indica datos muy dispersos.<br>
+            Un rango <strong>pequeño</strong> indica datos concentrados.<br>
+            Es un primer indicador de la variabilidad.
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="callout" style="border-color:rgba(192,57,43,.2);border-left-color:var(--acc);background:var(--acc-bg);">
+            <span class="cl-label" style="color:var(--acc);">📊 Ejemplo del diagnóstico</span>
+            Datos: <strong>4, 7, 2, 9, 5</strong>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Ordenados:</span>
+            <span class="data-val hi">2</span>
+            <span class="data-val">4</span>
+            <span class="data-val">5</span>
+            <span class="data-val">7</span>
+            <span class="data-val hi">9</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Máximo =</span>
+            <span class="data-val">9</span>
+            <span class="ds-label">Mínimo =</span>
+            <span class="data-val">2</span>
+          </div>
+          <div class="data-set">
+            <span class="ds-label">Rango =</span>
+            <span class="data-val hi">9 − 2 = 7</span>
+          </div>
+          <div class="card blue" style="font-size:12px;padding:10px 14px;">
+            El rango es <span style="color:var(--blue);font-size:15px;font-weight:700;">7</span> — los datos se dispersan 7 unidades entre el más bajo y el más alto.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Rango · Medida de dispersión</span></div>
+      <div class="sf-right">07 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 8 — TABLA COMPARATIVA ══════════════════ -->
+  <div class="slide" id="s8">
+    <div class="s-header">
+      <div class="sh-num">08</div>
+      <div class="sh-texts">
+        <div class="sh-label">Resumen</div>
+        <h2 class="sh-title">Comparativa de las <em>cuatro medidas</em></h2>
+      </div>
+    </div>
+    <div class="s-body" style="justify-content:flex-start;padding-top:14px;">
+      <table class="ev-table">
+        <thead>
+          <tr>
+            <th>Medida</th>
+            <th>Tipo</th>
+            <th>Cómo se calcula</th>
+            <th>Ejemplo con 4, 6, 8, 10, 12</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Media</strong></td>
+            <td>Tendencia central</td>
+            <td>Suma ÷ cantidad de datos</td>
+            <td>(4+6+8+10+12) ÷ 5 = 40 ÷ 5</td>
+            <td><span class="t-acc">8</span></td>
+          </tr>
+          <tr>
+            <td><strong>Mediana</strong></td>
+            <td>Tendencia central</td>
+            <td>Valor central al ordenar los datos</td>
+            <td>4, 6, <strong>8</strong>, 10, 12 → posición 3</td>
+            <td><span class="t-acc">8</span></td>
+          </tr>
+          <tr>
+            <td><strong>Moda</strong></td>
+            <td>Tendencia central</td>
+            <td>Valor que más se repite</td>
+            <td>Ninguno se repite → sin moda</td>
+            <td><span class="t-acc">—</span></td>
+          </tr>
+          <tr>
+            <td><strong>Rango</strong></td>
+            <td><em>Dispersión</em></td>
+            <td>Máximo − Mínimo</td>
+            <td>12 − 4</td>
+            <td><span class="t-acc">8</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout" style="margin-top:10px;">
+        <span class="cl-label">⚠️ Distinción importante</span>
+        La <strong>moda</strong> es la única medida que puede aplicarse también a datos <strong>cualitativos</strong> (colores, nombres, categorías). La media y la mediana solo aplican a datos numéricos.
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Comparativa de medidas</span></div>
+      <div class="sf-right">08 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 9 — GRÁFICAS ESTADÍSTICAS ═══════════════ -->
+  <div class="slide" id="s9">
+    <div class="s-header">
+      <div class="sh-num">09</div>
+      <div class="sh-texts">
+        <div class="sh-label">Representación visual</div>
+        <h2 class="sh-title">Tipos de <em>gráficas estadísticas</em></h2>
+      </div>
+    </div>
+    <div class="s-body" style="justify-content:flex-start;padding-top:12px;">
+      <div class="card-grid cols4" style="gap:8px;">
+        <div class="card accent" style="padding:12px 13px;font-size:12px;">
+          <div class="card-label">Tipo 1</div>
+          <div class="card-title" style="font-size:15px;margin-bottom:5px;">📊 Barras</div>
+          Compara cantidades entre categorías. Ideal para frecuencias, resultados o comparaciones directas.
+        </div>
+        <div class="card teal" style="padding:12px 13px;font-size:12px;">
+          <div class="card-label">Tipo 2</div>
+          <div class="card-title" style="font-size:15px;margin-bottom:5px;">📈 Líneas</div>
+          Muestra la <strong>evolución de un dato en el tiempo</strong>. Útil para tendencias y cambios progresivos.
+        </div>
+        <div class="card gold" style="padding:12px 13px;font-size:12px;">
+          <div class="card-label">Tipo 3</div>
+          <div class="card-title" style="font-size:15px;margin-bottom:5px;">🥧 Pastel</div>
+          Representa <strong>partes de un todo</strong> en porcentajes. Máximo 6 categorías para que sea legible.
+        </div>
+        <div class="card blue" style="padding:12px 13px;font-size:12px;">
+          <div class="card-label">Tipo 4</div>
+          <div class="card-title" style="font-size:15px;margin-bottom:5px;">📉 Histograma</div>
+          Muestra la <strong>distribución de frecuencias</strong> en intervalos continuos. Similar a barras pero sin separación.
+        </div>
+      </div>
+      <div class="two-col" style="gap:10px;flex:none;">
+        <div class="callout">
+          <span class="cl-label">🛠️ En herramientas digitales</span>
+          En CryptPad (hoja de cálculo), Google Sheets o Excel puedes generar estas gráficas <strong>automáticamente</strong> seleccionando los datos e insertando un gráfico. El software calcula los ejes y escala.
+        </div>
+        <div class="callout" style="border-left-color:var(--gold);background:var(--gold-bg);border-color:rgba(181,134,13,.2);">
+          <span class="cl-label" style="color:var(--gold);">📝 Para el diagnóstico</span>
+          La pregunta pide nombrar <strong>dos tipos</strong> válidos: <em>gráfica de barras</em>, <em>histograma</em>, <em>gráfica de pastel</em>, <em>diagrama de caja</em> o <em>gráfica de líneas</em>.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Gráficas estadísticas</span></div>
+      <div class="sf-right">09 / 10</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 10 — CIERRE ═════════════════════════════ -->
+  <div class="slide" id="s10">
+    <div class="s10-inner">
+      <div class="s10-bg"></div>
+      <div class="s10-icon">📋</div>
+      <h2 class="s10-title">
+        Ahora resuelves<br>
+        la evaluación <em>diagnóstica</em>
+      </h2>
+      <p class="s10-sub">
+        6 preguntas · La última es abierta · Sin tiempo límite ·
+        Recuerda lo que aprendiste hoy sobre medidas y gráficas.
+      </p>
+      <div class="s10-pills">
+        <span class="s10-pill r">Media = promedio</span>
+        <span class="s10-pill g">Mediana = centro</span>
+        <span class="s10-pill b">Moda = más frecuente</span>
+        <span class="s10-pill y">Rango = dispersión</span>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="sf-left"><span class="sf-dot"></span><span>Cultura Digital II · Propósito Formativo 4</span></div>
+      <div class="sf-right">10 / 10</div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- CONTROLES -->
+<div id="nav">
+  <button class="nav-btn" id="btn-prev" onclick="go(-1)" title="Anterior (←)">◀</button>
+  <div id="dots"></div>
+  <span id="slide-counter">1 / 10</span>
+  <button class="nav-btn" id="btn-next" onclick="go(1)" title="Siguiente (→)">▶</button>
+</div>
+
+<div id="key-hint">← → Flechas para navegar · Espacio para avanzar</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+let cur      = 0;
+
+/* ── Dots ── */
+const dotsEl = document.getElementById('dots');
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('on');
+  cur = Math.max(0, Math.min(n, total - 1));
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('on');
+  document.getElementById('slide-counter').textContent = `${cur + 1} / ${total}`;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === total - 1;
+}
+
+function go(dir) { goTo(cur + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ')  { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+  if (e.key === 'Home')       goTo(0);
+  if (e.key === 'End')        goTo(total - 1);
+});
+
+goTo(0);
+
+/* ── Ocultar hint ── */
+setTimeout(() => {
+  document.getElementById('key-hint').classList.add('hidden');
+}, 4000);
+</script>
+</body>
+</html>
