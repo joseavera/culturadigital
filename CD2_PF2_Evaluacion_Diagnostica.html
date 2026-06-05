@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Diagnóstica — Propósito Formativo 2 | Cultura Digital II</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* ── estilos específicos de esta evaluación ── */
+  .ctx-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 2px 10px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ctx-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .purpose-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 18px 0 6px;
+  }
+
+  .purpose-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.55;
+  }
+
+  .purpose-card .pc-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .purpose-card strong { color: var(--text); }
+
+  .instr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .instr-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.55;
+  }
+
+  .instr-item .ii-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-glow);
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- MARCA DE AGUA -->
+<div class="wm" aria-hidden="true">
+  <div class="wm-inner" id="wmInner"></div>
+</div>
+
+<!-- OVERLAY DE ALERTA -->
+<div id="alert-overlay">
+  <div class="alert-box">
+    <div class="alert-icon">⚠️</div>
+    <h3>Actividad detectada</h3>
+    <p id="alert-msg">Se detectó un intento de cambiar de ventana o copiar contenido. Esta acción queda registrada.</p>
+    <button class="btn btn-primary" onclick="closeAlert()">Entendido, continuar</button>
+  </div>
+</div>
+
+<!-- BARRA SUPERIOR -->
+<nav id="topbar">
+  <div class="tb-left">
+    <span class="tb-materia">💻 Cultura Digital II</span>
+    <span class="tb-semestre">2do Semestre · Bachillerato</span>
+    <span id="infraction-badge">⚠ infracciones: <span id="infr-count">0</span></span>
+  </div>
+  <div class="tb-right">
+    <div id="timer">⏱ 20:00</div>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- CABECERA -->
+  <header class="eval-header">
+    <div class="eval-tag">📋 Evaluación diagnóstica</div>
+    <h1>Propósito Formativo 2</h1>
+    <p class="eval-sub">Herramientas de software libre, privacidad digital y soberanía tecnológica</p>
+    <div class="eval-meta">
+      <span>📚 Cultura Digital II</span>
+      <span>⏱ 20 minutos</span>
+      <span>🎯 5 preguntas</span>
+      <span>📅 <span id="fecha-hoy"></span></span>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════
+       MARCO CONTEXTUAL
+  ════════════════════════════════════════════════════════ -->
+  <section class="context-box">
+    <div class="ctx-title">📖 Marco contextual del propósito formativo</div>
+
+    <p>
+      El <strong>Propósito Formativo 2</strong> de Cultura Digital II aborda el uso consciente y crítico
+      de herramientas digitales colaborativas de <strong>software libre</strong>. En un entorno donde la
+      mayoría de plataformas pertenecen a grandes corporaciones, conocer alternativas abiertas y
+      respetuosas de la privacidad es una competencia digital esencial para el siglo XXI.
+    </p>
+
+    <div class="purpose-grid">
+      <div class="purpose-card">
+        <div class="pc-label">🔓 Software libre</div>
+        <p>Herramientas cuyo <strong>código fuente es público</strong>: se puede ver, modificar y redistribuir. No requieren suscripción y no dependen de una empresa privada.</p>
+      </div>
+      <div class="purpose-card">
+        <div class="pc-label">🔐 Privacidad digital</div>
+        <p>Derecho a controlar quién accede a nuestra información. Herramientas como <strong>CryptPad</strong> y <strong>Riseup Pad</strong> cifran los datos del usuario.</p>
+      </div>
+      <div class="purpose-card">
+        <div class="pc-label">🌐 Soberanía digital</div>
+        <p>Capacidad de <strong>decidir qué tecnología usamos</strong> y cómo gestionamos nuestra información personal y colectiva en el entorno digital.</p>
+      </div>
+      <div class="purpose-card">
+        <div class="pc-label">🤝 Trabajo colaborativo</div>
+        <p>Plataformas como <strong>Etherpad</strong>, <strong>Framapad</strong> y <strong>CryptPad</strong> permiten editar documentos en equipo en tiempo real, sin necesidad de cuenta.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:14px;">
+      Las herramientas estudiadas en este propósito formativo se usan en la práctica para elaborar
+      documentos colaborativos, investigar problemáticas sociales y desarrollar productos digitales
+      que comuniquen información de manera ética y responsable.
+    </p>
+
+    <div class="ctx-chips">
+      <span class="ctx-highlight">🔑 CryptPad</span>
+      <span class="ctx-highlight">📝 Riseup Pad</span>
+      <span class="ctx-highlight">📄 Etherpad</span>
+      <span class="ctx-highlight">🌿 Framapad</span>
+      <span class="ctx-highlight">🔓 Código abierto</span>
+      <span class="ctx-highlight">🛡️ Cifrado de datos</span>
+    </div>
+  </section>
+
+  <!-- INSTRUCCIONES -->
+  <section class="context-box" style="border-left-color: var(--cyan);">
+    <div class="ctx-title" style="color:var(--cyan);">📌 Instrucciones</div>
+    <div class="instr-list">
+      <div class="instr-item"><span class="ii-num">1</span><span>Llena tus datos en la sección de identificación antes de comenzar.</span></div>
+      <div class="instr-item"><span class="ii-num">2</span><span>Lee cuidadosamente cada pregunta y selecciona <strong>una sola opción</strong>.</span></div>
+      <div class="instr-item"><span class="ii-num">3</span><span>Tienes <strong>20 minutos</strong>. El temporizador iniciará al cargar la página.</span></div>
+      <div class="instr-item"><span class="ii-num">4</span><span>No cambies de pestaña ni copies el contenido; las infracciones quedan registradas.</span></div>
+      <div class="instr-item"><span class="ii-num">5</span><span>Al terminar, presiona <strong>Calificar evaluación</strong> para ver tu resultado.</span></div>
+    </div>
+  </section>
+
+  <!-- DATOS DEL ALUMNO -->
+  <section class="student-card">
+    <div class="sc-title">👤 Datos de identificación</div>
+    <div class="sc-grid">
+      <div class="sc-field">
+        <label for="fn">Nombre completo</label>
+        <input type="text" id="fn" placeholder="Apellidos, Nombre(s)">
+      </div>
+      <div class="sc-field">
+        <label for="fg">Grupo</label>
+        <input type="text" id="fg" placeholder="Ej. 2°A">
+      </div>
+      <div class="sc-field">
+        <label for="fm">Materia</label>
+        <input type="text" id="fm" value="Cultura Digital II" placeholder="Cultura Digital II">
+      </div>
+      <div class="sc-field">
+        <label for="ff">Fecha</label>
+        <input type="date" id="ff">
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESO -->
+  <div class="progress-wrap">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+    <span class="progress-label" id="progress-label">0 / 5 respondidas</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PREGUNTAS
+  ════════════════════════════════════════════════════════ -->
+  <div id="questions-wrap">
+
+    <div class="section-title">Sección única — Herramientas digitales libres y privacidad</div>
+
+    <!-- P1 -->
+    <div class="question-card" id="qc1">
+      <div class="q-number">Pregunta 01 de 05</div>
+      <p class="q-text">¿Cuál de las siguientes características distingue a una herramienta de <strong>software libre</strong>?</p>
+      <div class="options" id="opts1">
+        <label class="option">
+          <input type="radio" name="q1" value="a">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">A</span>
+          <span class="opt-text">Requiere suscripción mensual</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="b">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">B</span>
+          <span class="opt-text">Es propiedad de una empresa privada</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="c">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">C</span>
+          <span class="opt-text">Permite ver y modificar su código fuente</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="d">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">D</span>
+          <span class="opt-text">Sólo se puede usar con conexión a internet</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="question-card" id="qc2">
+      <div class="q-number">Pregunta 02 de 05</div>
+      <p class="q-text">¿Qué función cumple <strong>CryptPad</strong>?</p>
+      <div class="options" id="opts2">
+        <label class="option">
+          <input type="radio" name="q2" value="a">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">A</span>
+          <span class="opt-text">Almacenar fotos y videos en la nube</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q2" value="b">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">B</span>
+          <span class="opt-text">Crear documentos colaborativos con cifrado de datos</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q2" value="c">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">C</span>
+          <span class="opt-text">Diseñar presentaciones con animaciones</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q2" value="d">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">D</span>
+          <span class="opt-text">Crear encuestas para redes sociales</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- P3 -->
+    <div class="question-card" id="qc3">
+      <div class="q-number">Pregunta 03 de 05</div>
+      <p class="q-text">¿Qué ventaja ofrecen herramientas como <strong>Riseup Pad</strong> respecto a Google Docs?</p>
+      <div class="options" id="opts3">
+        <label class="option">
+          <input type="radio" name="q3" value="a">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">A</span>
+          <span class="opt-text">Mayor compatibilidad con dispositivos móviles</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q3" value="b">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">B</span>
+          <span class="opt-text">Mejores funciones de edición de texto</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q3" value="c">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">C</span>
+          <span class="opt-text">Mayor respeto a la privacidad y anonimato del usuario</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q3" value="d">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">D</span>
+          <span class="opt-text">Mayor cantidad de plantillas prediseñadas</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- P4 -->
+    <div class="question-card" id="qc4">
+      <div class="q-number">Pregunta 04 de 05</div>
+      <p class="q-text">¿Qué significa el concepto <strong>"soberanía digital"</strong>?</p>
+      <div class="options" id="opts4">
+        <label class="option">
+          <input type="radio" name="q4" value="a">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">A</span>
+          <span class="opt-text">Poder usar muchas redes sociales al mismo tiempo</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q4" value="b">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">B</span>
+          <span class="opt-text">Controlar la información personal y tecnológica que usamos</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q4" value="c">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">C</span>
+          <span class="opt-text">Tener un gobierno que invierte en internet gratuito</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q4" value="d">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">D</span>
+          <span class="opt-text">Descargar aplicaciones sin virus</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- P5 -->
+    <div class="question-card" id="qc5">
+      <div class="q-number">Pregunta 05 de 05</div>
+      <p class="q-text">¿Cuál de las siguientes plataformas es un ejemplo de <strong>tecnología de libre acceso</strong>?</p>
+      <div class="options" id="opts5">
+        <label class="option">
+          <input type="radio" name="q5" value="a">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">A</span>
+          <span class="opt-text">Microsoft Word</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q5" value="b">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">B</span>
+          <span class="opt-text">WhatsApp</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q5" value="c">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">C</span>
+          <span class="opt-text">Etherpad</span>
+        </label>
+        <label class="option">
+          <input type="radio" name="q5" value="d">
+          <span class="opt-dot"></span>
+          <span class="opt-letter">D</span>
+          <span class="opt-text">Canva</span>
+        </label>
+      </div>
+    </div>
+
+  </div><!-- /questions-wrap -->
+
+  <!-- BOTÓN CALIFICAR -->
+  <div class="submit-wrap">
+    <button class="btn btn-primary btn-block" id="btn-submit" onclick="calificar()">
+      ✅ Calificar evaluación
+    </button>
+    <p class="submit-note">Responde todas las preguntas antes de calificar. El resultado se mostrará al instante.</p>
+  </div>
+
+  <!-- PANEL RESULTADO -->
+  <section id="result-panel">
+    <h2>Resultado de la evaluación</h2>
+    <span id="res-score">—</span>
+    <p id="res-pct"></p>
+    <div class="result-rank" id="res-rank"></div>
+    <p id="res-name"></p>
+    <p id="res-meta"></p>
+    <p id="res-infr"></p>
+
+    <div class="breakdown">
+      <h3>Desglose de respuestas</h3>
+      <div id="bd-rows"></div>
+    </div>
+
+    <div class="submit-wrap mt24">
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir resultado</button>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<script>
+/* ══ CLAVES DE RESPUESTA ══════════════════════════════════ */
+const ANSWERS = { q1:'c', q2:'b', q3:'c', q4:'b', q5:'c' };
+
+const QUESTIONS = {
+  q1: '¿Cuál característica distingue al software libre?',
+  q2: '¿Qué función cumple CryptPad?',
+  q3: '¿Ventaja de Riseup Pad vs Google Docs?',
+  q4: '¿Qué significa "soberanía digital"?',
+  q5: '¿Cuál es un ejemplo de tecnología de libre acceso?'
+};
+
+const OPTION_LABELS = {
+  q1: { a:'Requiere suscripción mensual', b:'Es propiedad de empresa privada', c:'Permite ver y modificar código fuente', d:'Solo con conexión a internet' },
+  q2: { a:'Almacenar fotos y videos', b:'Documentos colaborativos con cifrado', c:'Presentaciones con animaciones', d:'Encuestas para redes sociales' },
+  q3: { a:'Mayor compatibilidad móvil', b:'Mejores funciones de edición', c:'Respeto a la privacidad y anonimato', d:'Más plantillas prediseñadas' },
+  q4: { a:'Usar muchas redes sociales', b:'Controlar información personal y tecnológica', c:'Gobierno con internet gratuito', d:'Descargar apps sin virus' },
+  q5: { a:'Microsoft Word', b:'WhatsApp', c:'Etherpad', d:'Canva' }
+};
+
+const totalQs = 5;
+
+/* ══ TEMPORIZADOR ═════════════════════════════════════════ */
+let secondsLeft = 20 * 60;
+let timerInterval;
+let timeout = false;
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+    const s = String(secondsLeft % 60).padStart(2, '0');
+    const el = document.getElementById('timer');
+    el.textContent = `⏱ ${m}:${s}`;
+
+    if (secondsLeft <= 120 && secondsLeft > 60) { el.className = 'warn'; }
+    if (secondsLeft <= 60)  { el.className = 'danger'; }
+    if (secondsLeft <= 0)   { clearInterval(timerInterval); timeout = true; calificar(true); }
+  }, 1000);
+}
+
+/* ══ TEMA ════════════════════════════════════════════════ */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
+  try { localStorage.setItem('ev-theme', isDark ? 'light' : 'dark'); } catch(e){}
+}
+
+(function applyTheme() {
+  try {
+    const saved = localStorage.getItem('ev-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+    }
+  } catch(e){}
+})();
+
+/* ══ PROGRESO ════════════════════════════════════════════ */
+function updateProgress() {
+  let answered = 0;
+  for (let i = 1; i <= totalQs; i++) {
+    if (document.querySelector(`input[name="q${i}"]:checked`)) answered++;
+    document.getElementById(`qc${i}`).classList.toggle(
+      'answered', !!document.querySelector(`input[name="q${i}"]:checked`)
+    );
+  }
+  document.getElementById('progress-fill').style.width = (answered / totalQs * 100) + '%';
+  document.getElementById('progress-label').textContent = `${answered} / ${totalQs} respondidas`;
+}
+
+document.querySelectorAll('input[type="radio"]').forEach(r => {
+  r.addEventListener('change', updateProgress);
+});
+
+/* ══ INFRACCIONES ════════════════════════════════════════ */
+let infractions = 0;
+let tabSwitches = 0;
+
+function registerInfraction(msg) {
+  infractions++;
+  document.getElementById('infr-count').textContent = infractions;
+  document.getElementById('infraction-badge').classList.add('visible');
+  document.getElementById('alert-msg').textContent = msg;
+  document.getElementById('alert-overlay').classList.add('show');
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { tabSwitches++; registerInfraction(`Cambio de pestaña detectado (${tabSwitches}). Esta acción queda registrada.`); }
+});
+
+document.addEventListener('copy', e => {
+  e.preventDefault();
+  registerInfraction('Intento de copiar contenido detectado. Esta acción queda registrada.');
+});
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+function closeAlert() { document.getElementById('alert-overlay').classList.remove('show'); }
+
+/* ══ MARCA DE AGUA ═══════════════════════════════════════ */
+(function buildWatermark() {
+  const wrap = document.getElementById('wmInner');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('span');
+    s.className = 'wm-text';
+    s.textContent = 'CULTURA DIGITAL II';
+    wrap.appendChild(s);
+  }
+})();
+
+/* ══ CALIFICAR ═══════════════════════════════════════════ */
+function calificar(timedOut = false) {
+  clearInterval(timerInterval);
+
+  let correctas = 0;
+  const bdRows = document.getElementById('bd-rows');
+  bdRows.innerHTML = '';
+
+  let i = 1;
+  for (const [key, correctVal] of Object.entries(ANSWERS)) {
+    const selected = document.querySelector(`input[name="${key}"]:checked`);
+    const selVal   = selected ? selected.value : null;
+    const isOk     = selVal === correctVal;
+    if (isOk) correctas++;
+
+    const row = document.createElement('div');
+    row.className = 'bd-row';
+    row.innerHTML = `
+      <span class="bd-num">${String(i).padStart(2,'0')}</span>
+      <span class="bd-text">
+        ${QUESTIONS[key]}
+        <div class="bd-sel">Tu respuesta: ${selVal ? OPTION_LABELS[key][selVal] : '<em>Sin responder</em>'}</div>
+        ${!isOk ? `<div class="bd-ans">✓ Correcta: ${OPTION_LABELS[key][correctVal]}</div>` : ''}
+      </span>
+      <span class="bd-status ${isOk ? 'ok' : 'fail'}">${isOk ? '✓ CORRECTO' : '✗ INCORRECTO'}</span>`;
+    bdRows.appendChild(row);
+    i++;
+  }
+
+  const pct = Math.round(correctas / totalQs * 100);
+  document.getElementById('res-score').textContent = `${correctas}/${totalQs}`;
+  document.getElementById('res-pct').textContent    = `${pct}% de aciertos${timedOut ? ' — tiempo agotado' : ''}`;
+
+  const nombre  = document.getElementById('fn').value || 'Sin nombre';
+  const grupo   = document.getElementById('fg').value || 'Sin grupo';
+  const materia = document.getElementById('fm').value || 'Cultura Digital II';
+  const fecha   = document.getElementById('ff').value;
+
+  document.getElementById('res-name').textContent = nombre;
+  document.getElementById('res-meta').textContent = `${grupo} · ${materia}${fecha ? ' · ' + fecha : ''}`;
+
+  const rk = document.getElementById('res-rank');
+  if      (pct >= 90) { rk.className = 'result-rank rank-s'; rk.textContent = '★ EXCELENTE'; }
+  else if (pct >= 70) { rk.className = 'result-rank rank-a'; rk.textContent = '▲ MUY BIEN'; }
+  else if (pct >= 50) { rk.className = 'result-rank rank-b'; rk.textContent = '● SUFICIENTE'; }
+  else                { rk.className = 'result-rank rank-c'; rk.textContent = '▼ A REPASAR'; }
+
+  if (infractions > 0) {
+    document.getElementById('res-infr').textContent =
+      `⚠ Infracciones registradas: ${infractions} · Cambios de pestaña: ${tabSwitches}`;
+  }
+
+  const panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('btn-submit').disabled = true;
+}
+
+/* ══ INIT ════════════════════════════════════════════════ */
+document.getElementById('ff').value = new Date().toISOString().split('T')[0];
+document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-MX', {
+  day: '2-digit', month: 'long', year: 'numeric'
+});
+startTimer();
+</script>
+</body>
+</html>
