@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Final - Cultura Digital II</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --disabled: #95a5a6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        /* Formularios y Cajas */
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary);
+        }
+        .form-control {
+            width: 100%; padding: 12px; border: 2px solid #bdc3c7; border-radius: 6px;
+            font-family: 'Poppins', sans-serif; font-size: 1em; box-sizing: border-box; transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--secondary); outline: none; }
+        
+        .intro-box {
+            background-color: #e8f4f8; border-left: 5px solid var(--secondary);
+            padding: 20px; border-radius: 4px; margin-bottom: 30px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; font-weight: 600; background: #eee; padding: 12px 20px; border-radius: 8px;
+        }
+        .progress-container {
+            width: 45%; background: #ccc; border-radius: 10px; height: 10px; overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%; width: 0%; background: var(--secondary); transition: width 0.3s;
+        }
+
+        /* Tarjetas de Preguntas (Paginación) */
+        .question-card {
+            background: #fff; border: 1px solid #e1e8ed; border-radius: 8px;
+            padding: 25px; margin-bottom: 25px; display: none; /* Ocultas por defecto */
+            animation: fadeIn 0.4s;
+        }
+        .question-card.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-title {
+            font-size: 1.1em; font-weight: 600; color: var(--primary);
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+        }
+        .question-title i { color: var(--secondary); }
+
+        .options-group label {
+            display: block; padding: 12px 15px; margin-bottom: 10px;
+            background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .options-group label:hover { background: #e9ecef; border-color: var(--secondary); }
+        .options-group input[type="radio"] { margin-right: 12px; transform: scale(1.2); }
+
+        /* Botones y Candado de tiempo */
+        .btn {
+            display: inline-block; width: 100%; padding: 15px; color: white;
+            font-size: 1.1em; font-weight: 600; border: none; border-radius: 8px;
+            cursor: pointer; transition: 0.3s; text-align: center;
+        }
+        .btn-primary { background: var(--secondary); }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #219150; }
+        
+        /* Estilo para botón bloqueado */
+        .btn:disabled {
+            background: var(--disabled);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .controls-container {
+            display: flex; gap: 15px; margin-top: 20px;
+        }
+
+        /* Alertas y Resultados */
+        .toast-warning {
+            position: fixed; top: 20px; right: 20px; background: var(--danger);
+            color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none; z-index: 1000; font-weight: 600; animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        .student-data-badge {
+            background: #f8f9fa; border: 1px dashed var(--primary); padding: 15px;
+            border-radius: 8px; margin-bottom: 25px; display: inline-block; text-align: left;
+        }
+        .score-circle {
+            width: 140px; height: 140px; border-radius: 50%; background: var(--primary);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 3em; font-weight: bold; margin: 20px auto; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .infractions-box {
+            background: #fff3cd; border-left: 5px solid var(--warning);
+            padding: 20px; text-align: left; margin: 30px 0; border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast-warning"><i class="fas fa-exclamation-triangle"></i> ¡Acción no permitida registrada! Mantente en el examen.</div>
+
+<header>
+    <h1><i class="fas fa-laptop-code"></i> Evaluación Final: Cultura Digital II</h1>
+    <p>Validación Integral de Saberes y Ética en la Red</p>
+</header>
+
+<!-- PANTALLA 1: REGISTRO DE DATOS -->
+<div class="container" id="login-screen">
+    <div class="intro-box">
+        <h3><i class="fas fa-user-shield"></i> Portal de Identificación</h3>
+        <p>Completa tus datos para iniciar. <strong>Nota:</strong> Este examen requiere análisis profundo. Cada pregunta tiene un candado de lectura de 2 minutos. No podrás avanzar hasta que el tiempo concluya.</p>
+    </div>
+    
+    <form id="login-form">
+        <div class="form-group">
+            <label for="student-name">Nombre Completo:</label>
+            <input type="text" id="student-name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="student-group">Grupo o Semestre:</label>
+            <input type="text" id="student-group" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="student-id">Matrícula:</label>
+            <input type="text" id="student-id" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-play-circle"></i> Iniciar Evaluación</button>
+    </form>
+</div>
+
+<!-- PANTALLA 2: EXAMEN -->
+<div class="container" id="quiz-screen" style="display: none;">
+    <div class="status-bar">
+        <div><i class="fas fa-clock"></i> Tiempo Total: <span id="main-timer">00:00</span></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        <div id="progress-text">Pregunta 1 de 10</div>
+    </div>
+
+    <form id="quiz-form">
+        <!-- Las 10 preguntas -->
+        <div class="question-card active" data-index="0">
+            <div class="question-title">1. Trabajo Colaborativo Digital</div>
+            <p>Tu equipo necesita redactar un proyecto de investigación simultáneamente. Quieren asegurar la privacidad de sus datos y no depender de corporaciones tecnológicas. ¿Qué herramienta promueve mejor la libertad y privacidad?</p>
+            <div class="options-group">
+                <label><input type="radio" name="q1" value="A"> A) Herramientas colaborativas libres como Cryptpad o Riseup pad.</label>
+                <label><input type="radio" name="q1" value="B"> B) Redes sociales comerciales a través de mensajes directos.</label>
+                <label><input type="radio" name="q1" value="C"> C) Enviar versiones de un documento Word por correo electrónico.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="1">
+            <div class="question-title">2. Procesamiento de Datos</div>
+            <p>Aplicaste una encuesta para saber cuántas horas usan el celular tus compañeros. Para calcular la media y generar gráficas de dispersión usando software de código abierto, deberías utilizar:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q2" value="A"> A) Editores de presentaciones visuales.</label>
+                <label><input type="radio" name="q2" value="B"> B) Software estadístico libre como Jamovi o JASP.</label>
+                <label><input type="radio" name="q2" value="C"> C) Un sistema operativo privativo.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="2">
+            <div class="question-title">3. Métodos de Investigación Digital</div>
+            <p>Quieres investigar cómo se comportan y qué lenguaje utilizan los miembros de una comunidad de gamers en Discord. El método cualitativo ideal que adapta la observación participante al entorno en línea es:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q3" value="A"> A) Ciberetnografía.</label>
+                <label><input type="radio" name="q3" value="B"> B) Minería de datos cuantitativa.</label>
+                <label><input type="radio" name="q3" value="C"> C) Entrevista estructurada presencial.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="3">
+            <div class="question-title">4. Difusión de Información</div>
+            <p>Tu equipo desarrolló una campaña contra el ciberacoso y quiere que la información esté disponible permanentemente para toda la escuela. La mejor estrategia técnica es:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q4" value="A"> A) Imprimir folletos y guardarlos en la biblioteca.</label>
+                <label><input type="radio" name="q4" value="B"> B) Enviar la información por WhatsApp a 5 amigos.</label>
+                <label><input type="radio" name="q4" value="C"> C) Crear una página web o blog de diseño simple (ej. WordPress).</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="4">
+            <div class="question-title">5. Recopilación Cualitativa en Línea</div>
+            <p>Necesitas debatir con estudiantes sobre el impacto de la IA, guiando la conversación para observar reacciones en conjunto. ¿Qué técnica usarías?</p>
+            <div class="options-group">
+                <label><input type="radio" name="q5" value="A"> A) Grupo focal en línea (mediante videollamada o foro).</label>
+                <label><input type="radio" name="q5" value="B"> B) Análisis estadístico de medidas de dispersión.</label>
+                <label><input type="radio" name="q5" value="C"> C) Búsqueda en Wikipedia.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="5">
+            <div class="question-title">6. Licencias y Propiedad Intelectual</div>
+            <p>Encontraste un código fuente útil y notas que tiene una licencia permisiva (como MIT o BSD). Esto significa que tú puedes:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q6" value="A"> A) No puedes usarlo, está protegido por copyright estricto.</label>
+                <label><input type="radio" name="q6" value="B"> B) Usarlo, modificarlo y redistribuirlo con restricciones mínimas.</label>
+                <label><input type="radio" name="q6" value="C"> C) Usarlo solo si pagas una suscripción.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="6">
+            <div class="question-title">7. Aprendizaje Autónomo</div>
+            <p>Para aprender Python, decides unirte a foros, buscar tutoriales abiertos y practicar en plataformas de código libre. Esta actitud representa:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q7" value="A"> A) Dependencia tecnológica.</label>
+                <label><input type="radio" name="q7" value="B"> B) Aprendizaje individual autónomo apoyado en TICCAD.</label>
+                <label><input type="radio" name="q7" value="C"> C) Mercantilización de la atención.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="7">
+            <div class="question-title">8. Discriminación de Información</div>
+            <p>En redes sociales circula una noticia alarmante sobre tu escuela. Como ciudadano digital, tu primer paso para gestionar esta información debe ser:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q8" value="A"> A) Compartirla inmediatamente para advertir a todos.</label>
+                <label><input type="radio" name="q8" value="B"> B) Contrastar la información buscando fuentes oficiales.</label>
+                <label><input type="radio" name="q8" value="C"> C) Ignorarla y borrar tus perfiles sociales.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="8">
+            <div class="question-title">9. Impacto Socioambiental</div>
+            <p>El almacenamiento masivo de correos inútiles y archivos duplicados en la nube requiere que enormes servidores estén encendidos 24/7. ¿Qué problemática aborda este escenario?</p>
+            <div class="options-group">
+                <label><input type="radio" name="q9" value="A"> A) Contaminación digital y tecnológica.</label>
+                <label><input type="radio" name="q9" value="B"> B) Brecha de género en la informática.</label>
+                <label><input type="radio" name="q9" value="C"> C) Colonialismo de datos.</label>
+            </div>
+        </div>
+
+        <div class="question-card" data-index="9">
+            <div class="question-title">10. Identidad y Huella Digital</div>
+            <p>Todo lo que publicas, buscas y compartes en internet crea un perfil sobre ti. Gestionar adecuadamente estos datos es parte de ejercer tu:</p>
+            <div class="options-group">
+                <label><input type="radio" name="q10" value="A"> A) Ancho de banda.</label>
+                <label><input type="radio" name="q10" value="B"> B) Licenciamiento Copyleft.</label>
+                <label><input type="radio" name="q10" value="C"> C) Ciudadanía e identidad digital.</label>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <button type="button" id="next-btn" class="btn btn-primary" disabled>Analizando pregunta... (120s)</button>
+            <button type="submit" id="submit-btn" class="btn btn-success" style="display:none;" disabled>Finalizar Evaluación (120s)</button>
+        </div>
+    </form>
+</div>
+
+<!-- PANTALLA 3: RESULTADOS -->
+<div class="container" id="results-screen" style="display: none; text-align: center;">
+    <h1><i class="fas fa-award" style="color: var(--warning);"></i> Reporte de Evaluación Final</h1>
+    <div class="student-data-badge" id="display-student-data"></div>
+    <div class="score-circle" id="final-score">0</div>
+    <h3>Puntos sobre 100</h3>
+    <div class="infractions-box" id="infractions-container">
+        <h3><i class="fas fa-user-check"></i> Auditoría de Integridad Digital</h3>
+        <ul id="infractions-list" style="list-style: none; padding-left: 0;"></ul>
+    </div>
+</div>
+
+<script>
+    /* =========================================
+       CONFIGURACIÓN DEL PROFESOR
+       ========================================= */
+    // Cambia este valor a "5" cuando estés probando el examen tú mismo. 
+    // Para los alumnos déjalo en 120 (que son 2 minutos).
+    const TIEMPO_POR_PREGUNTA = 120; 
+    
+    // Variables de estado
+    let studentData = { name: '', group: '', id: '' };
+    let infractions = [];
+    let isQuizActive = false;
+    let secondsElapsedTotal = 0;
+    let mainTimerInterval;
+    
+    let currentQuestionIndex = 0;
+    const totalQuestions = 10;
+    let questionTimerInterval;
+    let timeLeftForCurrentQuestion = TIEMPO_POR_PREGUNTA;
+
+    // Login
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        studentData.name = document.getElementById('student-name').value;
+        studentData.group = document.getElementById('student-group').value;
+        studentData.id = document.getElementById('student-id').value;
+
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        
+        isQuizActive = true;
+        mainTimerInterval = setInterval(updateMainTimer, 1000);
+        
+        startQuestionTimer();
+        updateProgress();
+    });
+
+    // Cronómetro General
+    function updateMainTimer() {
+        if(!isQuizActive) return;
+        secondsElapsedTotal++;
+        const mins = String(Math.floor(secondsElapsedTotal / 60)).padStart(2, '0');
+        const secs = String(secondsElapsedTotal % 60).padStart(2, '0');
+        document.getElementById('main-timer').innerText = `${mins}:${secs}`;
+    }
+
+    // Cronómetro Específico por Pregunta (El Candado)
+    function startQuestionTimer() {
+        timeLeftForCurrentQuestion = TIEMPO_POR_PREGUNTA;
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        let targetBtn = (currentQuestionIndex === totalQuestions - 1) ? submitBtn : nextBtn;
+        
+        targetBtn.disabled = true;
+        
+        clearInterval(questionTimerInterval);
+        questionTimerInterval = setInterval(() => {
+            timeLeftForCurrentQuestion--;
+            
+            if (timeLeftForCurrentQuestion > 0) {
+                targetBtn.innerText = `Analizando pregunta... (${timeLeftForCurrentQuestion}s)`;
+            } else {
+                clearInterval(questionTimerInterval);
+                targetBtn.disabled = false;
+                if(currentQuestionIndex === totalQuestions - 1) {
+                    targetBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Finalizar Evaluación`;
+                } else {
+                    targetBtn.innerHTML = `Siguiente Pregunta <i class="fas fa-arrow-right"></i>`;
+                }
+            }
+        }, 1000);
+    }
+
+    // Lógica de Paginación "Siguiente"
+    document.getElementById('next-btn').addEventListener('click', () => {
+        // Validar que seleccionó una opción antes de avanzar
+        const currentCard = document.querySelector(`.question-card[data-index="${currentQuestionIndex}"]`);
+        const checkedOption = currentCard.querySelector('input[type="radio"]:checked');
+        
+        if(!checkedOption) {
+            alert("Por favor, selecciona una respuesta antes de continuar.");
+            return;
+        }
+
+        // Ocultar pregunta actual
+        currentCard.classList.remove('active');
+        
+        // Aumentar índice y mostrar la siguiente
+        currentQuestionIndex++;
+        document.querySelector(`.question-card[data-index="${currentQuestionIndex}"]`).classList.add('active');
+        
+        updateProgress();
+        
+        // Si es la última pregunta, cambiar botón
+        if(currentQuestionIndex === totalQuestions - 1) {
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('submit-btn').style.display = 'inline-block';
+        }
+        
+        // Reiniciar candado de tiempo
+        startQuestionTimer();
+    });
+
+    function updateProgress() {
+        const percentage = ((currentQuestionIndex) / totalQuestions) * 100;
+        document.getElementById('progress').style.width = percentage + '%';
+        document.getElementById('progress-text').innerText = `Pregunta ${currentQuestionIndex + 1} de ${totalQuestions}`;
+    }
+
+    // Integridad Académica (Trampas)
+    function logInfraction(type) {
+        if (!isQuizActive) return;
+        const time = document.getElementById('main-timer').innerText;
+        let msg = '';
+        if(type === 'copy') msg = `[Min. ${time}] Intento de copiar texto.`;
+        if(type === 'paste') msg = `[Min. ${time}] Intento de pegar información.`;
+        if(type === 'blur') msg = `[Min. ${time}] Salida de la ventana del examen (Cambio de pestaña).`;
+
+        infractions.push(msg);
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
+
+    document.addEventListener('copy', (e) => { e.preventDefault(); logInfraction('copy'); });
+    document.addEventListener('paste', (e) => { e.preventDefault(); logInfraction('paste'); });
+    window.addEventListener('blur', () => { logInfraction('blur'); });
+
+    // Enviar y Calificar
+    document.getElementById('quiz-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validar última pregunta
+        const currentCard = document.querySelector(`.question-card[data-index="${currentQuestionIndex}"]`);
+        if(!currentCard.querySelector('input[type="radio"]:checked')) {
+            alert("Por favor, selecciona la última respuesta.");
+            return;
+        }
+
+        isQuizActive = false;
+        clearInterval(mainTimerInterval);
+        clearInterval(questionTimerInterval);
+
+        const answers = { q1:'A', q2:'B', q3:'A', q4:'C', q5:'A', q6:'B', q7:'B', q8:'B', q9:'A', q10:'C' };
+        let score = 0;
+        const formData = new FormData(this);
+        for (let [question, answer] of formData.entries()) {
+            if (answers[question] === answer) score += 10;
+        }
+
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('results-screen').style.display = 'block';
+        
+        document.getElementById('display-student-data').innerHTML = `
+            <strong><i class="fas fa-user"></i> Estudiante:</strong> ${studentData.name}<br>
+            <strong><i class="fas fa-graduation-cap"></i> Grupo:</strong> ${studentData.group}<br>
+            <strong><i class="fas fa-fingerprint"></i> Matrícula/ID:</strong> ${studentData.id}
+        `;
+
+        const scoreEl = document.getElementById('final-score');
+        scoreEl.innerText = score;
+        if(score >= 80) scoreEl.style.background = 'var(--success)';
+        else if(score >= 60) scoreEl.style.background = 'var(--warning)';
+        else scoreEl.style.background = 'var(--danger)';
+
+        const list = document.getElementById('infractions-list');
+        if (infractions.length === 0) {
+            list.innerHTML = `<li style='color: var(--success); font-weight:600;'><i class="fas fa-check-circle"></i> Excelente integridad digital. Ninguna infracción.</li>`;
+        } else {
+            infractions.forEach(inf => {
+                const li = document.createElement('li');
+                li.style.marginBottom = "8px";
+                li.innerHTML = `<i class="fas fa-times-circle" style="color: var(--danger); margin-right:8px;"></i> ${inf}`;
+                list.appendChild(li);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
