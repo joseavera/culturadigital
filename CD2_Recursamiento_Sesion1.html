@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sesión 1 — Cultura Digital II · Recursamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+
+/* ══ EXTRAS SESIÓN 1 ═══════════════════════════════════════ */
+
+/* Mapa de ruta del curso */
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 18px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.rm-item {
+  padding: 16px 14px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background var(--transition);
+}
+
+.rm-item:last-child { border-right: none; }
+
+.rm-item.active {
+  background: var(--accent-glow);
+  border-right-color: var(--accent);
+}
+
+.rm-num {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+.rm-item.active .rm-num { color: var(--accent); }
+
+.rm-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.rm-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  width: fit-content;
+}
+.rm-item.active .rm-pill {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.rm-temas {
+  font-size: 11.5px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+/* Tarjeta de herramienta */
+.tool-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color var(--transition), transform .15s;
+}
+.tool-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+.tool-icon { font-size: 26px; }
+.tool-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+}
+.tool-url {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent);
+  text-decoration: none;
+  opacity: .8;
+}
+.tool-desc {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.55;
+}
+.tool-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  padding: 2px 8px;
+  border-radius: 99px;
+  width: fit-content;
+  text-transform: uppercase;
+}
+.tag-priv { background: var(--cyan-bg); border: 1px solid var(--cyan); color: var(--cyan); }
+.tag-open { background: var(--green-bg); border: 1px solid var(--green); color: var(--green); }
+.tag-collab { background: var(--accent-glow); border: 1px solid var(--accent); color: var(--accent); }
+
+/* Bloque de concepto */
+.concept-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+}
+.concept-block.teal { border-left-color: var(--cyan); }
+.concept-block.green { border-left-color: var(--green); }
+.concept-block.yellow { border-left-color: var(--yellow); }
+
+.cb-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.concept-block.teal  .cb-label { color: var(--cyan);   }
+.concept-block.green .cb-label { color: var(--green);  }
+.concept-block.yellow .cb-label { color: var(--yellow); }
+
+.cb-term {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.cb-def {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.65;
+}
+.cb-def strong { color: var(--text); }
+.cb-def em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+/* Instrucciones de actividad */
+.activity-header {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 18px;
+}
+.ah-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.ah-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.ah-sub {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.paso-list { display: flex; flex-direction: column; gap: 10px; }
+.paso {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.paso-n {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.paso strong { color: var(--text); }
+.paso a {
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  word-break: break-all;
+}
+
+/* Criterios de evaluación */
+.rubric-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.rubric-table th {
+  background: var(--bg3);
+  color: var(--text2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 2px solid var(--border2);
+}
+.rubric-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  line-height: 1.5;
+  vertical-align: top;
+}
+.rubric-table tr:last-child td { border-bottom: none; }
+.rubric-table tr:nth-child(even) td { background: var(--bg2); }
+.rubric-table td strong { color: var(--text); }
+.rubric-table td .pts {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+/* Reflexión de cierre */
+.close-reflection {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-top: 32px;
+  text-align: center;
+}
+.cr-icon { font-size: 32px; margin-bottom: 10px; }
+.cr-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.cr-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto 16px;
+}
+.cr-q {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.cr-q strong { color: var(--text); }
+.cr-note {
+  font-size: 12px;
+  color: var(--text2);
+  font-style: italic;
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Comparativa vs */
+.vs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.vs-table th {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+.vs-table th.col-criterio {
+  background: var(--bg3);
+  color: var(--text2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.vs-table th.col-libre {
+  background: var(--green-bg);
+  color: var(--green);
+  border-bottom: 2px solid var(--green);
+}
+.vs-table th.col-privado {
+  background: var(--red-bg);
+  color: var(--red);
+  border-bottom: 2px solid var(--red);
+}
+.vs-table td {
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: middle;
+  line-height: 1.45;
+}
+.vs-table td:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.vs-table td.ok  { color: var(--green); text-align: center; font-size: 15px; }
+.vs-table td.no  { color: var(--red);   text-align: center; font-size: 15px; }
+.vs-table td.mid { color: var(--yellow);text-align: center; font-size: 13px; }
+.vs-table tr:last-child td { border-bottom: none; }
+.vs-table tr:nth-child(even) td { background: var(--bg2); }
+
+/* Tabs de navegación */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition);
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Instr columns */
+.instr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.instr-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.55;
+}
+.ii-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-glow);
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+/* Alerta de bienvenida */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--accent-glow), var(--cyan-bg));
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.wb-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+.wb-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.wb-sub   { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* Grid dos columnas */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+@media (max-width: 640px) {
+  .roadmap { grid-template-columns: 1fr 1fr; }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wm" aria-hidden="true"><div class="wm-inner" id="wmInner"></div></div>
+
+<!-- BARRA SUPERIOR -->
+<nav id="topbar">
+  <div class="tb-left">
+    <span class="tb-materia">💻 Cultura Digital II</span>
+    <span class="tb-semestre">Recursamiento · Sesión 1 de 4</span>
+  </div>
+  <div class="tb-right">
+    <button id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ══ CABECERA ══ -->
+  <header class="eval-header">
+    <div class="eval-tag">📅 Sesión 1 · Recursamiento</div>
+    <h1>Trabajo colaborativo<br>en entornos digitales</h1>
+    <p class="eval-sub">Herramientas de software libre · Privacidad · Soberanía digital</p>
+    <div class="eval-meta">
+      <span>⏱ 1 hora</span>
+      <span>👥 Trabajo en equipo</span>
+      <span>📅 <span id="fecha-hoy"></span></span>
+    </div>
+  </header>
+
+  <!-- BIENVENIDA -->
+  <div class="welcome-banner">
+    <div class="wb-icon">👋</div>
+    <div>
+      <div class="wb-title">Bienvenidos al proceso de recursamiento</div>
+      <div class="wb-sub">
+        Esta no es una segunda oportunidad menor — es la misma materia con una perspectiva renovada.
+        Tienen cuatro sesiones de una hora. Cada una importa. Hoy empezamos desde donde más duele aprender:
+        <strong>trabajar en equipo de verdad</strong>, usando herramientas que respetan su privacidad.
+      </div>
+    </div>
+  </div>
+
+  <!-- MAPA DEL CURSO -->
+  <div class="section-title">Panorama del recursamiento</div>
+
+  <div class="roadmap">
+    <div class="rm-item active">
+      <div class="rm-num">Sesión 1</div>
+      <div class="rm-title">Colaboración y herramientas libres</div>
+      <div class="rm-pill">HOY</div>
+      <div class="rm-temas">Software libre · CryptPad · Riseup Pad · Soberanía digital · Actividad colaborativa</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-num">Sesión 2</div>
+      <div class="rm-title">Investigación digital crítica</div>
+      <div class="rm-pill">Próxima</div>
+      <div class="rm-temas">Fuentes confiables · Cuadro comparativo · Investigación por equipos</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-num">Sesión 3</div>
+      <div class="rm-title">Datos, estadística y gráficas</div>
+      <div class="rm-pill">Próxima</div>
+      <div class="rm-temas">Medidas de tendencia central · Hoja de cálculo colaborativa · Interpretación</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-num">Sesión 4</div>
+      <div class="rm-title">Cierre y evaluación final</div>
+      <div class="rm-pill">Final</div>
+      <div class="rm-temas">Repaso integral · Evaluación · Producto digital de difusión</div>
+    </div>
+  </div>
+
+  <!-- ══ TABS DE CONTENIDO ══ -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('conceptos', this)">📖 Conceptos</button>
+    <button class="tab-btn" onclick="showTab('herramientas', this)">🛠️ Herramientas</button>
+    <button class="tab-btn" onclick="showTab('comparativa', this)">⚖️ Libre vs. privativo</button>
+    <button class="tab-btn" onclick="showTab('actividad', this)">✏️ Actividad</button>
+    <button class="tab-btn" onclick="showTab('criterios', this)">📊 Criterios</button>
+  </div>
+
+  <!-- ══════ TAB 1: CONCEPTOS ══════ -->
+  <div id="tab-conceptos" class="tab-panel active">
+
+    <div class="section-title">Conceptos clave de hoy</div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+
+      <div class="concept-block">
+        <div class="cb-label">🔓 Concepto 1</div>
+        <div class="cb-term">Software libre</div>
+        <div class="cb-def">
+          Un programa es <strong>libre</strong> cuando garantiza cuatro libertades fundamentales al usuario:
+          <strong>usarlo</strong> para cualquier propósito, <strong>estudiarlo</strong> (acceder a su código fuente),
+          <strong>modificarlo</strong> según sus necesidades y <strong>redistribuirlo</strong> con o sin cambios.
+          <br><br>
+          El término "libre" no se refiere al precio — se refiere a la <em>libertad</em>.
+          Un programa puede costar dinero y seguir siendo libre si respeta esas cuatro condiciones.
+          Ejemplos: Linux, LibreOffice, Firefox, CryptPad, Etherpad.
+        </div>
+      </div>
+
+      <div class="two-col">
+
+        <div class="concept-block teal">
+          <div class="cb-label">🔐 Concepto 2</div>
+          <div class="cb-term">Privacidad digital</div>
+          <div class="cb-def">
+            Es el derecho a <strong>controlar qué información personal</strong> compartimos,
+            con quién la compartimos y en qué condiciones.
+            En el entorno digital, la privacidad se vulnera cuando una plataforma recopila,
+            analiza o vende nuestros datos sin nuestro conocimiento real.
+            <br><br>
+            El cifrado de extremo a extremo es la principal herramienta técnica que
+            protege la privacidad: <strong>solo el emisor y el receptor pueden leer el contenido</strong>,
+            ni siquiera el servidor intermediario.
+          </div>
+        </div>
+
+        <div class="concept-block green">
+          <div class="cb-label">🌐 Concepto 3</div>
+          <div class="cb-term">Soberanía digital</div>
+          <div class="cb-def">
+            Es la capacidad de <strong>decidir y controlar</strong> qué tecnología usamos,
+            dónde se almacenan nuestros datos y de quién dependemos para comunicarnos y
+            colaborar en línea.
+            <br><br>
+            Una persona con soberanía digital no acepta sin cuestionamiento las condiciones
+            de uso de las plataformas — <em>elige conscientemente</em> sus herramientas,
+            entiende sus implicaciones y puede migrar si lo desea.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="concept-block yellow">
+        <div class="cb-label">🤝 Concepto 4</div>
+        <div class="cb-term">Trabajo colaborativo digital</div>
+        <div class="cb-def">
+          No basta con que varias personas tengan acceso al mismo documento.
+          El trabajo colaborativo digital genuino implica que <strong>todos los integrantes participan activamente</strong>:
+          aportan ideas, editan, revisan y respetan las contribuciones de los demás —
+          todo dentro de la misma herramienta, al mismo tiempo o de forma asincrónica.
+          <br><br>
+          Las herramientas como CryptPad, Riseup Pad y Etherpad fueron diseñadas específicamente
+          para esto: <strong>permiten ver quién está editando qué y cuándo</strong>,
+          sin necesidad de crear cuentas ni entregar datos personales a una corporación.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="context-box" style="margin-top:20px; border-left-color: var(--cyan);">
+      <div class="ctx-title" style="color:var(--cyan);">💬 Para reflexionar antes de continuar</div>
+      <p>
+        Piensa en las últimas veces que trabajaste "en equipo" en un documento digital.
+        ¿Usaron Google Docs? ¿Se repartieron por partes y las juntaron al final?
+        ¿Todos editaron o solo uno? ¿Leyeron las condiciones de uso de la plataforma que usaron?
+      </p>
+      <p style="margin-top:8px;">
+        <strong>Esas respuestas son el punto de partida de esta sesión.</strong>
+        No hay respuestas incorrectas — hay respuestas que nos ayudan a identificar
+        qué tan conscientes somos de nuestra cultura digital.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 2: HERRAMIENTAS ══════ -->
+  <div id="tab-herramientas" class="tab-panel">
+
+    <div class="section-title">Herramientas de colaboración de software libre</div>
+
+    <div class="three-col" style="margin-bottom:18px;">
+
+      <div class="tool-card">
+        <div class="tool-icon">🔒</div>
+        <div class="tool-name">CryptPad</div>
+        <div class="tool-url">cryptpad.fr</div>
+        <div class="tool-tag tag-priv">Cifrado extremo a extremo</div>
+        <div class="tool-desc">
+          Suite de documentos colaborativos con <strong>cifrado de extremo a extremo</strong>.
+          Incluye texto, hojas de cálculo, presentaciones, formularios y pizarrones.
+          El servidor <em>nunca puede leer el contenido</em> de los documentos.
+          No requiere cuenta para colaborar — solo comparte el enlace.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-icon">📝</div>
+        <div class="tool-name">Riseup Pad</div>
+        <div class="tool-url">pad.riseup.net</div>
+        <div class="tool-tag tag-priv">Privacidad · Sin cuenta</div>
+        <div class="tool-desc">
+          Editor de texto colaborativo en tiempo real operado por el colectivo
+          Riseup, enfocado en <strong>privacidad y activismo digital</strong>.
+          Muy usado en educación por su sencillez: abres el sitio, creas un pad,
+          compartes el enlace y todos editan al instante. Sin registro.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-icon">📄</div>
+        <div class="tool-name">Etherpad</div>
+        <div class="tool-url">etherpad.org · framapad.org</div>
+        <div class="tool-tag tag-open">Código abierto</div>
+        <div class="tool-desc">
+          El editor colaborativo original, de <strong>código abierto</strong>.
+          Permite ver quién escribe qué con colores por autor.
+          Framapad es una instancia pública gratuita mantenida por la
+          organización francesa Framasoft. Acceso inmediato sin cuenta.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="context-box">
+      <div class="ctx-title">🆚 ¿Por qué no simplemente usar Google Docs?</div>
+      <p>
+        Google Docs es una excelente herramienta funcional. Pero cuando usas Google Docs,
+        aceptas que Google <strong>puede analizar el contenido de tus documentos</strong>
+        para mostrarte publicidad y alimentar sus modelos de inteligencia artificial.
+        Tus textos, ideas y proyectos forman parte de los datos que Google recopila sobre ti.
+      </p>
+      <p style="margin-top:8px;">
+        Eso no significa que debas dejar de usarlo para siempre — significa que debes
+        <strong>elegirlo conscientemente</strong>, sabiendo la diferencia.
+        Para un proyecto escolar sobre conservación de especies o un reglamento de convivencia grupal,
+        herramientas como CryptPad o Riseup Pad son igual de funcionales
+        y <em>respetan mucho mejor tu privacidad</em>.
+      </p>
+    </div>
+
+    <div class="section-title" style="margin-top:24px;">¿Cómo ingresar hoy?</div>
+    <div class="paso-list">
+      <div class="paso">
+        <span class="paso-n">1</span>
+        <span>Desde tu dispositivo, abre el navegador y ve a <a href="https://pad.riseup.net" target="_blank">pad.riseup.net</a> o <a href="https://cryptpad.fr" target="_blank">cryptpad.fr</a>.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">2</span>
+        <span>En <strong>Riseup Pad</strong>: haz clic en "Create New Pad" y copia el enlace generado. En <strong>CryptPad</strong>: crea un documento de texto y copia el enlace desde el botón de compartir.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">3</span>
+        <span>Comparte ese enlace con todos los integrantes de tu equipo por WhatsApp o proyéctalo. <strong>Todos entran al mismo documento sin crear cuenta.</strong></span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">4</span>
+        <span>En CryptPad, cada colaborador puede escribir su nombre en la esquina superior para que el maestro identifique quién participó. En Etherpad, cada autor aparece en un color diferente automáticamente.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 3: COMPARATIVA ══════ -->
+  <div id="tab-comparativa" class="tab-panel">
+
+    <div class="section-title">Software libre vs. software privativo</div>
+
+    <table class="vs-table">
+      <thead>
+        <tr>
+          <th class="col-criterio">Criterio</th>
+          <th class="col-libre">✅ Software libre<br><small style="font-weight:400;font-size:10px;">CryptPad · Riseup Pad · Etherpad</small></th>
+          <th class="col-privado">❌ Software privativo<br><small style="font-weight:400;font-size:10px;">Google Docs · Microsoft 365 · Notion</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Puedes ver su código fuente</td>
+          <td class="ok">✓</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td>Requiere cuenta para colaborar</td>
+          <td class="ok">No (en la mayoría)</td>
+          <td class="no">Sí (en la mayoría)</td>
+        </tr>
+        <tr>
+          <td>El servidor puede leer tus documentos</td>
+          <td class="ok">No (con cifrado E2E)</td>
+          <td class="no">Sí</td>
+        </tr>
+        <tr>
+          <td>Tus datos son usados para publicidad</td>
+          <td class="ok">No</td>
+          <td class="no">Sí (en versiones gratuitas)</td>
+        </tr>
+        <tr>
+          <td>Puedes instalar tu propia instancia</td>
+          <td class="ok">✓</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td>Funciones avanzadas (estilos, fórmulas complejas)</td>
+          <td class="mid">Básicas a intermedias</td>
+          <td class="ok">Muy completas</td>
+        </tr>
+        <tr>
+          <td>Disponibilidad sin internet</td>
+          <td class="mid">Limitada</td>
+          <td class="mid">Limitada</td>
+        </tr>
+        <tr>
+          <td>Costo para uso básico</td>
+          <td class="ok">Gratuito</td>
+          <td class="mid">Freemium / pago</td>
+        </tr>
+        <tr>
+          <td>Respeta la soberanía digital del usuario</td>
+          <td class="ok">✓ — el usuario controla sus datos</td>
+          <td class="no">✗ — la empresa controla los datos</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="context-box" style="margin-top:18px; border-left-color: var(--yellow);">
+      <div class="ctx-title" style="color:var(--yellow);">⚠️ Importante — no es blanco o negro</div>
+      <p>
+        Usar software privativo <strong>no te convierte en alguien irresponsable</strong>.
+        La clave es la <em>consciencia</em>: saber qué estás entregando a cambio de la herramienta que usas.
+        Si decides usar Google Docs sabiendo que Google analizará tu contenido y estás de acuerdo con eso,
+        es una decisión válida.
+      </p>
+      <p style="margin-top:8px;">
+        Lo que <strong>no es válido</strong> es usar cualquier herramienta sin saber cómo funciona,
+        sin leer las condiciones y sin entender las implicaciones.
+        <em>Eso es exactamente lo contrario de la cultura digital.</em>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 4: ACTIVIDAD ══════ -->
+  <div id="tab-actividad" class="tab-panel">
+
+    <div class="activity-header">
+      <div class="ah-tag">✏️ Actividad colaborativa · Sesión 1</div>
+      <div class="ah-title">Reglamento de convivencia digital</div>
+      <div class="ah-sub">Equipos de 3 a 4 integrantes · Tiempo: 35 minutos · Herramienta: CryptPad o Riseup Pad</div>
+    </div>
+
+    <div class="context-box" style="margin-bottom:18px;">
+      <div class="ctx-title">📌 ¿Qué van a hacer?</div>
+      <p>
+        Como equipo, van a redactar un <strong>reglamento de convivencia digital</strong>
+        para su grupo. No es un ejercicio ficticio — es un documento real que puede
+        aplicarse en su salón. El reglamento debe construirse <em>colaborativamente</em>
+        dentro de la herramienta digital: todos editan, todos aportan, todos firman.
+      </p>
+    </div>
+
+    <div class="paso-list">
+      <div class="paso">
+        <span class="paso-n">1</span>
+        <span><strong>Formen su equipo</strong> (3 o 4 personas). Elijan a un coordinador que cree el documento en CryptPad o Riseup Pad y comparta el enlace con todos.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">2</span>
+        <span><strong>Estructuren el documento</strong> con los siguientes apartados en este orden: Portada, Propósito del reglamento, Normas de comportamiento (mínimo 6), Consecuencias formativas por incumplimiento, Cómo fomentar el respeto y la tolerancia, Cómo garantizar la participación de todos, Vigencia y aprobación.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">3</span>
+        <span><strong>Cada integrante debe redactar al menos un apartado completo.</strong> No es válido que una sola persona escriba todo y los demás copien. El historial de ediciones de la herramienta lo muestra.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">4</span>
+        <span><strong>Las normas deben estar redactadas en infinitivo y en positivo.</strong> En lugar de "No insultar", escriban "Tratar a todos con respeto y dignidad". En lugar de "No copiar", escriban "Entregar trabajo propio y citar las fuentes usadas".</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">5</span>
+        <span><strong>Al finalizar,</strong> incluyan en la portada el enlace al documento, los nombres de todos los integrantes, el grupo, la materia y la fecha. Compartan el enlace con el docente.</span>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:18px;">
+      <div class="concept-block teal">
+        <div class="cb-label">💡 Consejos para el contenido</div>
+        <div class="cb-def" style="font-size:12.5px;">
+          Las mejores normas nacen de problemas reales del grupo.
+          Piensen: ¿qué situaciones generan conflicto en su salón digital?
+          ¿Uso del celular? ¿Plagio? ¿Exclusión de compañeros en proyectos?
+          <strong>Un buen reglamento resuelve problemas concretos, no repite frases genéricas.</strong>
+        </div>
+      </div>
+      <div class="concept-block green">
+        <div class="cb-label">⚠️ Lo que NO es trabajo colaborativo</div>
+        <div class="cb-def" style="font-size:12.5px;">
+          Repartirse el documento por secciones, redactar cada quien su parte
+          por separado y luego pegar todo en un solo archivo <strong>no es colaboración</strong>
+          — es división de trabajo. La colaboración real implica leer lo que escribe el otro,
+          sugerir cambios, construir sobre las ideas de tus compañeros.
+        </div>
+      </div>
+    </div>
+
+    <div class="context-box" style="margin-top:18px; border-left-color: var(--accent);">
+      <div class="ctx-title">🔗 Herramientas que pueden usar hoy</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;">
+        <a href="https://cryptpad.fr" target="_blank" style="color:var(--cyan);font-family:var(--font-mono);font-size:12px;text-decoration:none;background:var(--cyan-bg);border:1px solid var(--cyan);border-radius:var(--radius-sm);padding:5px 12px;">🔒 cryptpad.fr</a>
+        <a href="https://pad.riseup.net" target="_blank" style="color:var(--green);font-family:var(--font-mono);font-size:12px;text-decoration:none;background:var(--green-bg);border:1px solid var(--green);border-radius:var(--radius-sm);padding:5px 12px;">📝 pad.riseup.net</a>
+        <a href="https://framapad.org" target="_blank" style="color:var(--accent);font-family:var(--font-mono);font-size:12px;text-decoration:none;background:var(--accent-glow);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:5px 12px;">📄 framapad.org</a>
+        <a href="https://etherpad.org" target="_blank" style="color:var(--yellow);font-family:var(--font-mono);font-size:12px;text-decoration:none;background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius-sm);padding:5px 12px;">📄 etherpad.org</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 5: CRITERIOS ══════ -->
+  <div id="tab-criterios" class="tab-panel">
+
+    <div class="section-title">Criterios de evaluación · Actividad sesión 1</div>
+
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th>Núm.</th>
+          <th>Criterio a evaluar</th>
+          <th>Evidencia esperada</th>
+          <th>Pts.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>El documento fue creado en una herramienta de software libre (CryptPad, Riseup Pad, Etherpad o Framapad)</td>
+          <td>Enlace válido a la plataforma correcta</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Todos los integrantes participaron activamente en la edición del documento</td>
+          <td>Historial de ediciones con múltiples autores o nombres en el documento</td>
+          <td><span class="pts">15</span></td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>El propósito del reglamento está claramente redactado y justifica la importancia de la convivencia digital</td>
+          <td>Párrafo de propósito coherente y específico al contexto del grupo</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>El documento incluye al menos 6 normas, redactadas en infinitivo y en positivo</td>
+          <td>Normas claras, aplicables y sin lenguaje negativo directo</td>
+          <td><span class="pts">15</span></td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Se incluyen consecuencias formativas (no solo castigos) por incumplimiento de las normas</td>
+          <td>Mínimo 3 consecuencias que promuevan la reflexión y la reparación</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td>El documento está bien organizado, con todos los apartados solicitados y presentación ordenada</td>
+          <td>Portada completa, apartados en orden, sin errores ortográficos graves</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>7</strong></td>
+          <td>El apartado de vigencia y aprobación indica cómo y cuándo entra en vigor el reglamento</td>
+          <td>Fecha de elaboración, mecanismo de aprobación y proceso de revisión futura</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>8</strong></td>
+          <td>Autoevaluación del equipo — reflexión escrita sobre el proceso de trabajo colaborativo</td>
+          <td>Párrafo de cierre con aprendizajes, dificultades encontradas y cómo las resolvieron</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="font-weight:700;color:var(--text);text-align:right;">Coevaluación adicional (heteroevaluación entre equipos)</td>
+          <td style="font-size:12px;color:var(--text2);">Revisión breve del reglamento de otro equipo con retroalimentación escrita</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr style="background:var(--accent-glow);">
+          <td colspan="3" style="font-weight:700;color:var(--text);text-align:right;font-size:13px;">Total</td>
+          <td><span class="pts" style="font-size:17px;">100</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="two-col" style="margin-top:18px;">
+      <div class="context-box">
+        <div class="ctx-title">📋 Entrega</div>
+        <p>
+          Compartan el <strong>enlace directo al documento</strong> en la plataforma usada.
+          No es necesario descargar ni enviar por correo — el enlace es la evidencia.
+          El docente accede en tiempo real y puede ver el historial de contribuciones.
+        </p>
+      </div>
+      <div class="context-box" style="border-left-color:var(--yellow);">
+        <div class="ctx-title" style="color:var(--yellow);">⚠️ Sobre la coevaluación</div>
+        <p>
+          Al final de la sesión, cada equipo <strong>revisará el reglamento de otro equipo</strong>
+          con una mirada crítica y propositiva. No se trata de señalar errores —
+          se trata de identificar fortalezas y sugerir mejoras concretas.
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <!-- /tabs -->
+
+  <!-- ══ REFLEXIÓN DE CIERRE ══ -->
+  <div class="close-reflection">
+    <div class="cr-icon">🌱</div>
+    <div class="cr-title">Para cerrar la sesión — piensen en esto</div>
+    <div class="cr-questions">
+      <div class="cr-q"><strong>¿Colaboré de verdad</strong> o solo sumé mi nombre al documento?</div>
+      <div class="cr-q"><strong>¿Entiendo</strong> por qué usar CryptPad es una decisión diferente a usar Google Docs?</div>
+      <div class="cr-q"><strong>¿Las normas que escribimos</strong> resuelven problemas reales de nuestro grupo?</div>
+      <div class="cr-q"><strong>¿Qué haría diferente</strong> si tuviera que repetir esta actividad mañana?</div>
+    </div>
+    <p class="cr-note">
+      La cultura digital no se aprende leyendo definiciones — se aprende <strong>tomando decisiones conscientes</strong>
+      sobre las herramientas que usamos, cómo trabajamos con otros y qué dejamos en internet.
+      Esta sesión fue el primer paso. En la próxima, aplicaremos eso a investigar información de forma crítica.
+    </p>
+  </div>
+
+  <!-- PIE -->
+  <div style="text-align:center; margin-top:32px; padding:20px; border-top:1px solid var(--border);">
+    <p style="font-family:var(--font-mono); font-size:10px; color:var(--text2); letter-spacing:.1em; text-transform:uppercase;">
+      Cultura Digital II · Recursamiento · Sesión 1 de 4 · <span id="fecha-footer"></span>
+    </p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ══ TEMA ════════════════════════════════════════════════ */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+  try { localStorage.setItem('ev-theme', isDark ? 'light' : 'dark'); } catch(e){}
+}
+(function() {
+  try {
+    const t = localStorage.getItem('ev-theme');
+    if (t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('theme-toggle').textContent = t === 'dark' ? '☀️' : '🌙';
+    }
+  } catch(e){}
+})();
+
+/* ══ TABS ════════════════════════════════════════════════ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: btn.closest('.tabs').offsetTop - 70, behavior: 'smooth' });
+}
+
+/* ══ FECHA ═══════════════════════════════════════════════ */
+const opts = { day:'2-digit', month:'long', year:'numeric' };
+const fechaStr = new Date().toLocaleDateString('es-MX', opts);
+document.getElementById('fecha-hoy').textContent    = fechaStr;
+document.getElementById('fecha-footer').textContent = fechaStr;
+
+/* ══ MARCA DE AGUA ═══════════════════════════════════════ */
+(function() {
+  const w = document.getElementById('wmInner');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('span');
+    s.className = 'wm-text';
+    s.textContent = 'CULTURA DIGITAL II';
+    w.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
