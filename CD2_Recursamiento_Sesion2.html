@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sesión 2 — Cultura Digital II · Recursamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+
+/* ══ EXTRAS SESIÓN 2 ═══════════════════════════════════════ */
+
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 18px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.rm-item {
+  padding: 14px 14px;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 5px;
+}
+.rm-item:last-child { border-right: none; }
+.rm-item.done { opacity: .5; }
+.rm-item.active { background: var(--accent-glow); border-right-color: var(--accent); }
+.rm-num  { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--text2); }
+.rm-item.active .rm-num { color: var(--accent); }
+.rm-item.done  .rm-num  { color: var(--green); }
+.rm-title { font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.rm-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border2);
+  color: var(--text2); width: fit-content;
+}
+.rm-item.active .rm-pill { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rm-item.done   .rm-pill { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 0; border-bottom: 2px solid var(--border);
+  margin-bottom: 24px; overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  padding: 10px 20px; border: none; background: transparent; color: var(--text2);
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; transition: color var(--transition), border-color var(--transition);
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Concepto */
+.concept-block {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent); border-radius: var(--radius);
+  padding: 18px 22px;
+}
+.concept-block.teal   { border-left-color: var(--cyan);   }
+.concept-block.green  { border-left-color: var(--green);  }
+.concept-block.yellow { border-left-color: var(--yellow); }
+.cb-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 4px; font-weight: 600;
+}
+.concept-block.teal   .cb-label { color: var(--cyan);   }
+.concept-block.green  .cb-label { color: var(--green);  }
+.concept-block.yellow .cb-label { color: var(--yellow); }
+.cb-term { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.cb-def  { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
+.cb-def strong { color: var(--text); }
+.cb-def em     { color: var(--accent); font-style: normal; font-weight: 600; }
+
+/* Grid */
+.two-col   { display: grid; grid-template-columns: 1fr 1fr;     gap: 14px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* Señales de confiabilidad */
+.signal-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.sc-icon { font-size: 22px; }
+.sc-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.sc-desc  { font-size: 12px; color: var(--text2); line-height: 1.55; }
+.sc-good  { font-size: 11px; color: var(--green);  font-family: var(--font-mono); }
+.sc-bad   { font-size: 11px; color: var(--red);    font-family: var(--font-mono); }
+
+/* Actividad — cuadro comparativo */
+.activity-header {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border); border-top: 3px solid var(--accent);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 18px;
+}
+.ah-tag   { font-family: var(--font-mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; font-weight: 700; }
+.ah-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.ah-sub   { font-size: 13px; color: var(--text2); }
+
+.paso-list { display: flex; flex-direction: column; gap: 10px; }
+.paso {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.paso-n {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: #fff; background: var(--accent); min-width: 26px; height: 26px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.paso strong { color: var(--text); }
+
+/* Tabla cuadro comparativo */
+.comp-table {
+  width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 14px;
+}
+.comp-table th {
+  background: var(--bg3); color: var(--text2); font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border2);
+}
+.comp-table th.col-f { color: var(--accent); border-bottom-color: var(--accent); }
+.comp-table td {
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text2); line-height: 1.5; vertical-align: top;
+}
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table tr:nth-child(even) td { background: var(--bg2); }
+.comp-table td:first-child { font-size: 11px; color: var(--accent); font-family: var(--font-mono); font-weight: 700; }
+
+/* Mini quiz de verificación */
+.verif-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 12px;
+}
+.vc-num   { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+.vc-text  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; line-height: 1.5; }
+.vc-opts  { display: flex; flex-direction: column; gap: 7px; }
+.vc-opt {
+  display: flex; align-items: center; gap: 10px; padding: 9px 14px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  user-select: none;
+}
+.vc-opt:hover { background: var(--border); }
+.vc-opt input { display: none; }
+.vc-dot {
+  width: 16px; min-width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--border2); display: flex; align-items: center;
+  justify-content: center; transition: border-color var(--transition);
+}
+.vc-dot::after {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); opacity: 0; transition: opacity var(--transition);
+}
+.vc-opt input:checked + .vc-dot { border-color: var(--accent); }
+.vc-opt input:checked + .vc-dot::after { opacity: 1; }
+.vc-opt:has(input:checked) { background: var(--accent-glow); border-color: var(--accent); }
+.vc-letter { font-family: var(--font-mono); font-size: 11px; color: var(--text2); min-width: 16px; }
+.vc-lbl    { font-size: 13px; color: var(--text); }
+.vc-feedback { display: none; margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.55; }
+.vc-feedback.ok   { background: var(--green-bg);  border: 1px solid var(--green);  color: var(--green);  }
+.vc-feedback.fail { background: var(--red-bg);    border: 1px solid var(--red);    color: var(--red);    }
+
+/* Rubrica */
+.rubric-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.rubric-table th {
+  background: var(--bg3); color: var(--text2); font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border2);
+}
+.rubric-table td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text2); line-height: 1.5; vertical-align: top;
+}
+.rubric-table tr:last-child td { border-bottom: none; }
+.rubric-table tr:nth-child(even) td { background: var(--bg2); }
+.rubric-table td strong { color: var(--text); }
+.rubric-table td .pts { font-family: var(--font-mono); font-weight: 700; color: var(--accent); font-size: 13px; }
+
+/* Cierre */
+.close-reflection {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 28px; margin-top: 32px; text-align: center;
+}
+.cr-icon  { font-size: 32px; margin-bottom: 10px; }
+.cr-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.cr-questions { display: flex; flex-direction: column; gap: 8px; text-align: left; max-width: 520px; margin: 0 auto 16px; }
+.cr-q {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 16px;
+  font-size: 13px; color: var(--text2); line-height: 1.5;
+}
+.cr-q strong { color: var(--text); }
+.cr-note { font-size: 12px; color: var(--text2); font-style: italic; line-height: 1.6; max-width: 480px; margin: 0 auto; }
+
+/* Envío a Sheets */
+.send-status {
+  display: none; margin-top: 12px; padding: 10px 16px;
+  border-radius: var(--radius-sm); font-size: 12px;
+  font-family: var(--font-mono); text-align: center;
+}
+.send-status.ok   { background: var(--green-bg); border: 1px solid var(--green); color: var(--green); display: block; }
+.send-status.fail { background: var(--yellow-bg); border: 1px solid var(--yellow); color: var(--yellow); display: block; }
+
+@media (max-width: 640px) {
+  .roadmap   { grid-template-columns: 1fr 1fr; }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wm" aria-hidden="true"><div class="wm-inner" id="wmInner"></div></div>
+
+<!-- OVERLAY -->
+<div id="alert-overlay">
+  <div class="alert-box">
+    <div class="alert-icon" id="alert-icon">⚠️</div>
+    <h3 id="alert-title">Actividad detectada</h3>
+    <p id="alert-msg">Se registró una acción no permitida.</p>
+    <button class="btn btn-primary" onclick="closeAlert()">Entendido — continuar</button>
+  </div>
+</div>
+
+<!-- BARRA SUPERIOR -->
+<nav id="topbar">
+  <div class="tb-left">
+    <span class="tb-materia">💻 Cultura Digital II</span>
+    <span class="tb-semestre">Recursamiento · Sesión 2 de 4</span>
+    <span id="infraction-badge">⚠ infracciones: <span id="infr-count">0</span></span>
+  </div>
+  <div class="tb-right">
+    <div id="timer">⏱ 60:00</div>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- CABECERA -->
+  <header class="eval-header">
+    <div class="eval-tag">📅 Sesión 2 · Recursamiento</div>
+    <h1>Investigación digital<br>crítica y confiable</h1>
+    <p class="eval-sub">Fuentes digitales · Criterios de confiabilidad · Cuadro comparativo · Verificación</p>
+    <div class="eval-meta">
+      <span>⏱ 1 hora</span>
+      <span>🔍 Investigación individual</span>
+      <span>📊 Evaluación integrada</span>
+      <span>📅 <span id="fecha-hoy"></span></span>
+    </div>
+  </header>
+
+  <!-- MAPA DEL CURSO -->
+  <div class="section-title">Avance del recursamiento</div>
+  <div class="roadmap">
+    <div class="rm-item done">
+      <div class="rm-num">Sesión 1</div>
+      <div class="rm-title">Colaboración y herramientas libres</div>
+      <div class="rm-pill">✓ Completada</div>
+    </div>
+    <div class="rm-item active">
+      <div class="rm-num">Sesión 2</div>
+      <div class="rm-title">Investigación digital crítica</div>
+      <div class="rm-pill">HOY</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-num">Sesión 3</div>
+      <div class="rm-title">Datos, estadística y gráficas</div>
+      <div class="rm-pill">Próxima</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-num">Sesión 4</div>
+      <div class="rm-title">Cierre y evaluación final</div>
+      <div class="rm-pill">Final</div>
+    </div>
+  </div>
+
+  <!-- DATOS DEL ALUMNO -->
+  <section class="student-card">
+    <div class="sc-title">👤 Identificación</div>
+    <div class="sc-grid">
+      <div class="sc-field">
+        <label for="fn">Nombre completo</label>
+        <input type="text" id="fn" placeholder="Apellidos, Nombre(s)" autocomplete="off">
+      </div>
+      <div class="sc-field">
+        <label for="fg">Grupo</label>
+        <input type="text" id="fg" placeholder="Ej. 2°B" autocomplete="off">
+      </div>
+      <div class="sc-field">
+        <label for="fm">Materia</label>
+        <input type="text" id="fm" value="Cultura Digital II">
+      </div>
+      <div class="sc-field">
+        <label for="ff">Fecha</label>
+        <input type="date" id="ff">
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('conceptos', this)">📖 Conceptos</button>
+    <button class="tab-btn" onclick="showTab('criterios', this)">🔍 Criterios de confiabilidad</button>
+    <button class="tab-btn" onclick="showTab('verificacion', this)">✅ Verificación rápida</button>
+    <button class="tab-btn" onclick="showTab('actividad', this)">✏️ Actividad</button>
+    <button class="tab-btn" onclick="showTab('rubrica', this)">📊 Rúbrica</button>
+  </div>
+
+  <!-- ══════ TAB 1: CONCEPTOS ══════ -->
+  <div id="tab-conceptos" class="tab-panel active">
+
+    <div class="section-title">¿Qué es investigar digitalmente?</div>
+
+    <div class="concept-block" style="margin-bottom:14px;">
+      <div class="cb-label">🔍 Idea central</div>
+      <div class="cb-term">Investigación digital</div>
+      <div class="cb-def">
+        Investigar en internet no es lo mismo que buscar en Google y copiar el primer resultado.
+        La investigación digital es un proceso <strong>sistemático</strong> que implica buscar,
+        <strong>evaluar, comparar y organizar</strong> información proveniente de fuentes diversas
+        antes de usarla. La diferencia entre un estudiante que investiga y uno que solo busca
+        está en la <em>conciencia crítica</em> con la que se acerca a cada fuente.
+      </div>
+    </div>
+
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="concept-block">
+        <div class="cb-label">📂 Tipo 1</div>
+        <div class="cb-term">Fuente primaria</div>
+        <div class="cb-def">
+          Información de <strong>primera mano</strong>: artículos científicos originales,
+          reportes de gobierno, datos oficiales, entrevistas, estadísticas de organismos como
+          INEGI, SEMARNAT, OMS, UNAM.
+        </div>
+      </div>
+      <div class="concept-block teal">
+        <div class="cb-label">📰 Tipo 2</div>
+        <div class="cb-term">Fuente secundaria</div>
+        <div class="cb-def">
+          Información que <strong>interpreta o resume</strong> fuentes primarias: artículos de
+          divulgación, noticias de medios reconocidos, libros de texto, enciclopedias académicas.
+        </div>
+      </div>
+      <div class="concept-block yellow">
+        <div class="cb-label">⚠️ Tipo 3</div>
+        <div class="cb-term">Fuente no verificada</div>
+        <div class="cb-def">
+          Blogs personales, redes sociales, sitios sin autor visible, foros,
+          cadenas de WhatsApp. <strong>No se descarta de entrada</strong>, pero
+          exige verificación con otras fuentes.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-block green" style="margin-bottom:14px;">
+      <div class="cb-label">🧩 Proceso completo</div>
+      <div class="cb-term">Las 5 etapas de la investigación digital</div>
+      <div class="cb-def">
+        <strong>1. Buscar</strong> — usar palabras clave precisas en buscadores, repositorios y bases de datos académicas.<br>
+        <strong>2. Evaluar</strong> — aplicar criterios de confiabilidad antes de usar la fuente.<br>
+        <strong>3. Recopilar</strong> — registrar autor, institución, URL, fecha y idea principal.<br>
+        <strong>4. Comparar</strong> — contrastar lo que dice una fuente con al menos dos más.<br>
+        <strong>5. Organizar</strong> — estructurar la información en cuadros, esquemas o reportes
+        que muestren claramente de dónde viene cada dato.
+      </div>
+    </div>
+
+    <div class="context-box" style="border-left-color:var(--cyan);">
+      <div class="ctx-title" style="color:var(--cyan);">💬 Para reflexionar</div>
+      <p>
+        La próxima vez que leas algo en internet y lo vayas a usar o compartir, pregúntate:
+        <strong>¿quién lo escribió? ¿cuándo? ¿con qué propósito? ¿lo confirma otra fuente?</strong>
+        Si no puedes responder al menos tres de esas preguntas, la fuente no está lista para usarse.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 2: CRITERIOS ══════ -->
+  <div id="tab-criterios" class="tab-panel">
+
+    <div class="section-title">Criterios para evaluar una fuente digital</div>
+
+    <div class="context-box" style="margin-bottom:18px;">
+      <div class="ctx-title">📌 ¿Cómo sé si una fuente es confiable?</div>
+      <p>
+        No existe una regla única, pero sí hay criterios que, aplicados en conjunto,
+        permiten tomar una decisión fundamentada. Ningún criterio solo determina si
+        una fuente es confiable — <strong>hay que evaluar todos</strong>.
+      </p>
+    </div>
+
+    <div class="three-col" style="margin-bottom:14px;">
+
+      <div class="signal-card">
+        <div class="sc-icon">✍️</div>
+        <div class="sc-title">Autoría</div>
+        <div class="sc-desc">¿Quién escribió el contenido? ¿Tiene nombre, apellido, formación o credenciales visibles?</div>
+        <div class="sc-good">✓ Dr. Ignacio Méndez, UNAM · Institución reconocida</div>
+        <div class="sc-bad">✗ "Redacción" · Anónimo · Sin firma</div>
+      </div>
+
+      <div class="signal-card">
+        <div class="sc-icon">🏛️</div>
+        <div class="sc-title">Institución o respaldo</div>
+        <div class="sc-desc">¿Hay una organización, universidad, gobierno o empresa reconocida detrás del contenido?</div>
+        <div class="sc-good">✓ gob.mx · unam.mx · who.int · nature.com</div>
+        <div class="sc-bad">✗ .blogspot.com · wixsite.com sin datos · foros</div>
+      </div>
+
+      <div class="signal-card">
+        <div class="sc-icon">📅</div>
+        <div class="sc-title">Fecha de publicación</div>
+        <div class="sc-desc">¿Cuándo se publicó? ¿Es reciente? ¿El tema requiere información actualizada?</div>
+        <div class="sc-good">✓ Fecha visible y reciente para temas en evolución</div>
+        <div class="sc-bad">✗ Sin fecha · Más de 5 años en temas cambiantes</div>
+      </div>
+
+      <div class="signal-card">
+        <div class="sc-icon">🎯</div>
+        <div class="sc-title">Propósito</div>
+        <div class="sc-desc">¿Para qué se publicó? ¿Informar, persuadir, vender, entretener o desinformar?</div>
+        <div class="sc-good">✓ Informar con datos verificables · Divulgar ciencia</div>
+        <div class="sc-bad">✗ Vender un producto · Generar pánico · Sensacionalismo</div>
+      </div>
+
+      <div class="signal-card">
+        <div class="sc-icon">🔗</div>
+        <div class="sc-title">Fuentes citadas</div>
+        <div class="sc-desc">¿El texto cita de dónde vienen sus datos? ¿Las referencias son rastreables?</div>
+        <div class="sc-good">✓ Bibliografía · Hipervínculos a fuentes originales</div>
+        <div class="sc-bad">✗ "Según estudios" sin citar cuáles · Sin referencias</div>
+      </div>
+
+      <div class="signal-card">
+        <div class="sc-icon">🔄</div>
+        <div class="sc-title">Verificación cruzada</div>
+        <div class="sc-desc">¿Otros medios o instituciones dicen lo mismo? Si solo una fuente lo dice, sospecha.</div>
+        <div class="sc-good">✓ Tres fuentes distintas coinciden en el dato</div>
+        <div class="sc-bad">✗ Solo una fuente · Contradice a todas las demás</div>
+      </div>
+
+    </div>
+
+    <div class="context-box" style="border-left-color:var(--yellow);">
+      <div class="ctx-title" style="color:var(--yellow);">⚠️ Señales de alerta inmediata</div>
+      <p>
+        Desconfía cuando el título usa <strong>mayúsculas excesivas o signos de admiración</strong>,
+        cuando el contenido genera <strong>miedo, urgencia o indignación exagerada</strong>,
+        cuando las imágenes no coinciden con el texto, o cuando no hay forma de contactar al autor.
+        Estas no son pruebas definitivas de falsedad, pero sí son señales para pausar y verificar antes de continuar.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 3: VERIFICACIÓN RÁPIDA ══════ -->
+  <div id="tab-verificacion" class="tab-panel">
+
+    <div class="section-title">Verifica tu comprensión — 5 preguntas rápidas</div>
+
+    <div class="context-box" style="margin-bottom:18px;border-left-color:var(--cyan);">
+      <div class="ctx-title" style="color:var(--cyan);">📌 Instrucciones</div>
+      <p>Responde cada pregunta y haz clic en <strong>Verificar</strong> para ver la retroalimentación inmediata.
+      Estas preguntas no se califican — son para que compruebes tu comprensión antes de la actividad.</p>
+    </div>
+
+    <!-- VQ1 -->
+    <div class="verif-card" id="vq1">
+      <div class="vc-num">Pregunta 1 de 5</div>
+      <p class="vc-text">Un artículo dice: <em>"Según estudios recientes, el 80% de los ajolotes están extintos"</em>, pero no cita ninguna fuente. ¿Qué deberías hacer?</p>
+      <div class="vc-opts">
+        <label class="vc-opt"><input type="radio" name="vq1" value="a"><span class="vc-dot"></span><span class="vc-letter">A</span><span class="vc-lbl">Usarlo inmediatamente porque el porcentaje suena convincente.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq1" value="b"><span class="vc-dot"></span><span class="vc-letter">B</span><span class="vc-lbl">Buscar el dato en fuentes institucionales (SEMARNAT, UNAM, IUCN) para confirmarlo antes de usarlo.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq1" value="c"><span class="vc-dot"></span><span class="vc-letter">C</span><span class="vc-lbl">Descartarlo por completo porque no tiene fuente.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq1" value="d"><span class="vc-dot"></span><span class="vc-letter">D</span><span class="vc-lbl">Compartirlo en redes sociales para que otros lo verifiquen.</span></label>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:10px;padding:8px 18px;font-size:12px;" onclick="verificar('vq1','b','✓ Correcto. Nunca se descarta una fuente solo por no tener cita — se busca confirmar el dato en fuentes confiables. Descartar sin verificar también es un error de investigación.', '✗ Recuerda: la ausencia de fuente no confirma ni desmiente el dato. El paso correcto es buscar el dato en fuentes institucionales reconocidas.')">Verificar</button>
+      <div class="vc-feedback" id="vq1-fb"></div>
+    </div>
+
+    <!-- VQ2 -->
+    <div class="verif-card" id="vq2">
+      <div class="vc-num">Pregunta 2 de 5</div>
+      <p class="vc-text">¿Cuál de las siguientes URL es la señal más confiable de una fuente institucional en México?</p>
+      <div class="vc-opts">
+        <label class="vc-opt"><input type="radio" name="vq2" value="a"><span class="vc-dot"></span><span class="vc-letter">A</span><span class="vc-lbl">informacion-veridica2024.blogspot.com</span></label>
+        <label class="vc-opt"><input type="radio" name="vq2" value="b"><span class="vc-dot"></span><span class="vc-letter">B</span><span class="vc-lbl">semarnat.gob.mx</span></label>
+        <label class="vc-opt"><input type="radio" name="vq2" value="c"><span class="vc-dot"></span><span class="vc-letter">C</span><span class="vc-lbl">ecologia-mexico.wixsite.com</span></label>
+        <label class="vc-opt"><input type="radio" name="vq2" value="d"><span class="vc-dot"></span><span class="vc-letter">D</span><span class="vc-lbl">medioambiente-datos.com</span></label>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:10px;padding:8px 18px;font-size:12px;" onclick="verificar('vq2','b','✓ Correcto. El dominio .gob.mx pertenece exclusivamente a instituciones del gobierno mexicano. Es una señal fuerte de fuente oficial, aunque no garantiza que el contenido sea el más actualizado.','✗ Los dominios .gob.mx pertenecen a instituciones gubernamentales y son verificados. Los dominios .blogspot.com, .wixsite.com o genéricos .com no tienen ese respaldo institucional.')">Verificar</button>
+      <div class="vc-feedback" id="vq2-fb"></div>
+    </div>
+
+    <!-- VQ3 -->
+    <div class="verif-card" id="vq3">
+      <div class="vc-num">Pregunta 3 de 5</div>
+      <p class="vc-text">¿Por qué es importante registrar la <strong>fecha de publicación</strong> de una fuente digital?</p>
+      <div class="vc-opts">
+        <label class="vc-opt"><input type="radio" name="vq3" value="a"><span class="vc-dot"></span><span class="vc-letter">A</span><span class="vc-lbl">Para saber si el diseño del sitio web es moderno.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq3" value="b"><span class="vc-dot"></span><span class="vc-letter">B</span><span class="vc-lbl">Porque en temas que cambian rápidamente, información desactualizada puede ser incorrecta o engañosa.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq3" value="c"><span class="vc-dot"></span><span class="vc-letter">C</span><span class="vc-lbl">Porque el maestro lo pide en el formato del cuadro comparativo.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq3" value="d"><span class="vc-dot"></span><span class="vc-letter">D</span><span class="vc-lbl">Para ordenar las fuentes alfabéticamente por año.</span></label>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:10px;padding:8px 18px;font-size:12px;" onclick="verificar('vq3','b','✓ Correcto. En temas como cambio climático, salud pública o tecnología, un artículo de hace 5 años puede contener datos que ya fueron superados o refutados. La fecha importa para saber qué tan vigente es la información.','✗ La fecha de publicación es un criterio de confiabilidad real: nos dice si la información sigue siendo válida para el momento en que la usamos.')">Verificar</button>
+      <div class="vc-feedback" id="vq3-fb"></div>
+    </div>
+
+    <!-- VQ4 -->
+    <div class="verif-card" id="vq4">
+      <div class="vc-num">Pregunta 4 de 5</div>
+      <p class="vc-text">Tienes tres fuentes sobre contaminación del aire. Una es de la OMS, otra de un blog anónimo y otra de una universidad pública. ¿Cuál combinación usarías para tu investigación?</p>
+      <div class="vc-opts">
+        <label class="vc-opt"><input type="radio" name="vq4" value="a"><span class="vc-dot"></span><span class="vc-letter">A</span><span class="vc-lbl">Solo el blog anónimo porque tiene más visitas y lenguaje sencillo.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq4" value="b"><span class="vc-dot"></span><span class="vc-letter">B</span><span class="vc-lbl">Las tres por igual, sin importar su origen.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq4" value="c"><span class="vc-dot"></span><span class="vc-letter">C</span><span class="vc-lbl">La OMS y la universidad como fuentes principales, y el blog solo si cita sus propias fuentes y coincide con las otras dos.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq4" value="d"><span class="vc-dot"></span><span class="vc-letter">D</span><span class="vc-lbl">Ninguna — hay que buscar fuentes más recientes antes de usar cualquiera.</span></label>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:10px;padding:8px 18px;font-size:12px;" onclick="verificar('vq4','c','✓ Correcto. La OMS y una universidad pública tienen respaldo institucional claro. El blog puede usarse como apoyo si sus datos coinciden y cita fuentes verificables, pero no como fuente principal.','✗ No todas las fuentes tienen el mismo peso. Las institucionales (OMS, universidades, gobierno) tienen mecanismos de verificación interna que los blogs anónimos no tienen.')">Verificar</button>
+      <div class="vc-feedback" id="vq4-fb"></div>
+    </div>
+
+    <!-- VQ5 -->
+    <div class="verif-card" id="vq5">
+      <div class="vc-num">Pregunta 5 de 5</div>
+      <p class="vc-text">¿Qué significa que una fuente sea <strong>confiable</strong> en el contexto de la investigación digital?</p>
+      <div class="vc-opts">
+        <label class="vc-opt"><input type="radio" name="vq5" value="a"><span class="vc-dot"></span><span class="vc-letter">A</span><span class="vc-lbl">Que tiene muchos seguidores en redes sociales y buen diseño visual.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq5" value="b"><span class="vc-dot"></span><span class="vc-letter">B</span><span class="vc-lbl">Que es gratuita y fácil de encontrar en Google.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq5" value="c"><span class="vc-dot"></span><span class="vc-letter">C</span><span class="vc-lbl">Que tiene autoría identificable, respaldo institucional, fecha de publicación, propósito informativo claro y puede verificarse con otras fuentes.</span></label>
+        <label class="vc-opt"><input type="radio" name="vq5" value="d"><span class="vc-dot"></span><span class="vc-letter">D</span><span class="vc-lbl">Que aparece en la primera página de resultados de Google.</span></label>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:10px;padding:8px 18px;font-size:12px;" onclick="verificar('vq5','c','✓ Correcto. La confiabilidad de una fuente se evalúa por la combinación de criterios: autoría, respaldo, fecha, propósito y verificación cruzada. Ninguno de esos criterios por sí solo la hace confiable — es el conjunto.','✗ La posición en Google, el número de seguidores o la gratuidad no determinan la confiabilidad. Lo que importa es quién lo escribió, cuándo, con qué propósito y si se puede verificar.')">Verificar</button>
+      <div class="vc-feedback" id="vq5-fb"></div>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 4: ACTIVIDAD ══════ -->
+  <div id="tab-actividad" class="tab-panel">
+
+    <div class="activity-header">
+      <div class="ah-tag">✏️ Actividad · Sesión 2</div>
+      <div class="ah-title">Cuadro comparativo de fuentes digitales</div>
+      <div class="ah-sub">Individual · Tiempo: 35 minutos · Entrega: enlace o captura del cuadro completo</div>
+    </div>
+
+    <div class="context-box" style="margin-bottom:18px;">
+      <div class="ctx-title">📌 ¿Qué harás?</div>
+      <p>
+        Elegirás <strong>una problemática social</strong> de tu comunidad o entorno cercano
+        y buscarás <strong>tres fuentes digitales diferentes</strong> sobre ese tema.
+        Luego analizarás cada fuente con los criterios vistos en clase y llenarás el
+        cuadro comparativo. Al final escribirás una conclusión breve sobre cuál fuente
+        fue más confiable y por qué.
+      </p>
+    </div>
+
+    <div class="paso-list" style="margin-bottom:18px;">
+      <div class="paso">
+        <span class="paso-n">1</span>
+        <span><strong>Elige una problemática</strong> de las siguientes opciones: contaminación por basura en la comunidad, uso excesivo del celular en adolescentes, impacto del cambio climático en tu localidad, escasez de agua, o una que tú propongas y el docente apruebe.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">2</span>
+        <span><strong>Busca tres fuentes digitales distintas</strong> sobre esa problemática. Usa al menos un tipo diferente para cada una: una página web institucional, un artículo periodístico o de divulgación y un video informativo o documento oficial.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">3</span>
+        <span><strong>Llena el cuadro comparativo</strong> que ves abajo para cada fuente. Puedes hacerlo en papel, en un documento de texto o en CryptPad si prefieres digital.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">4</span>
+        <span><strong>Evalúa la confiabilidad</strong> de cada fuente con argumentos. No basta con escribir "sí es confiable" — explica <em>por qué</em> con base en los criterios vistos.</span>
+      </div>
+      <div class="paso">
+        <span class="paso-n">5</span>
+        <span><strong>Escribe una conclusión</strong> de al menos 3 oraciones: ¿cuál fuente te pareció más confiable? ¿por qué? ¿qué harías diferente al investigar la próxima vez?</span>
+      </div>
+    </div>
+
+    <!-- Cuadro comparativo visual -->
+    <div class="section-title">Cuadro comparativo — estructura guía</div>
+
+    <div style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th class="col-f">Fuente 1</th>
+            <th class="col-f">Fuente 2</th>
+            <th class="col-f">Fuente 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TIPO</td>
+            <td>¿Video, artículo, web, documento?</td>
+            <td>¿Video, artículo, web, documento?</td>
+            <td>¿Video, artículo, web, documento?</td>
+          </tr>
+          <tr>
+            <td>URL</td>
+            <td>Dirección completa del sitio o enlace</td>
+            <td>Dirección completa del sitio o enlace</td>
+            <td>Dirección completa del sitio o enlace</td>
+          </tr>
+          <tr>
+            <td>IDEA PRINCIPAL</td>
+            <td>¿De qué trata en una oración?</td>
+            <td>¿De qué trata en una oración?</td>
+            <td>¿De qué trata en una oración?</td>
+          </tr>
+          <tr>
+            <td>AUTOR / INSTITUCIÓN</td>
+            <td>Nombre del autor o la organización responsable</td>
+            <td>Nombre del autor o la organización responsable</td>
+            <td>Nombre del autor o la organización responsable</td>
+          </tr>
+          <tr>
+            <td>FECHA</td>
+            <td>¿Cuándo fue publicada?</td>
+            <td>¿Cuándo fue publicada?</td>
+            <td>¿Cuándo fue publicada?</td>
+          </tr>
+          <tr>
+            <td>CONFIABILIDAD</td>
+            <td>¿Por qué sí o no es confiable? (argumenta con criterios)</td>
+            <td>¿Por qué sí o no es confiable? (argumenta con criterios)</td>
+            <td>¿Por qué sí o no es confiable? (argumenta con criterios)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="two-col" style="margin-top:18px;">
+      <div class="context-box">
+        <div class="ctx-title">💡 Consejo para buscar mejor</div>
+        <p>
+          En lugar de escribir solo el tema en Google, usa comillas para frases exactas:
+          <strong>"contaminación plásticos México 2024"</strong>.
+          También puedes agregar <strong>site:gob.mx</strong> o <strong>site:edu.mx</strong>
+          para filtrar resultados institucionales.
+        </p>
+      </div>
+      <div class="context-box" style="border-left-color:var(--yellow);">
+        <div class="ctx-title" style="color:var(--yellow);">⚠️ Lo que no cuenta como investigación</div>
+        <p>
+          Copiar el resumen de Wikipedia sin ir a las fuentes que Wikipedia cita.
+          Usar solo redes sociales. Usar tres páginas del mismo sitio web.
+          Escribir "es confiable porque tiene mucha información".
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 5: RÚBRICA ══════ -->
+  <div id="tab-rubrica" class="tab-panel">
+
+    <div class="section-title">Criterios de evaluación · Sesión 2</div>
+
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th>Núm.</th>
+          <th>Criterio</th>
+          <th>Evidencia esperada</th>
+          <th>Pts.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>Investiga información sobre una problemática social real con tres fuentes digitales</td>
+          <td>Cuadro con tres filas completas, cada una de una fuente diferente</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Usa tres fuentes de tipos distintos (web, video, artículo, documento, etc.)</td>
+          <td>El tipo de cada fuente está identificado correctamente</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>Registra la URL completa y el autor o institución de cada fuente</td>
+          <td>URL funcional y nombre del autor o institución en las tres fuentes</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>Expresa la idea principal de cada fuente con sus propias palabras</td>
+          <td>No es copia literal — es paráfrasis en una o dos oraciones</td>
+          <td><span class="pts">15</span></td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Registra la fecha de publicación de cada fuente</td>
+          <td>Fecha visible o rastreable en las tres fuentes</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td>Evalúa la confiabilidad de cada fuente con argumentos basados en criterios</td>
+          <td>No basta "sí es confiable" — menciona autoría, institución, fecha o propósito</td>
+          <td><span class="pts">20</span></td>
+        </tr>
+        <tr>
+          <td><strong>7</strong></td>
+          <td>Presenta una conclusión reflexiva sobre cuál fuente fue más confiable y por qué</td>
+          <td>Mínimo 3 oraciones que conecten los criterios con la experiencia de búsqueda</td>
+          <td><span class="pts">15</span></td>
+        </tr>
+        <tr>
+          <td><strong>8</strong></td>
+          <td>Organiza el cuadro de forma clara, sin errores ortográficos graves</td>
+          <td>Cuadro legible, sin celdas vacías importantes, ortografía cuidada</td>
+          <td><span class="pts">10</span></td>
+        </tr>
+        <tr style="background:var(--accent-glow);">
+          <td colspan="3" style="font-weight:700;color:var(--text);text-align:right;font-size:13px;">Total</td>
+          <td><span class="pts" style="font-size:17px;">100</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- AUTOEVALUACIÓN + ENVÍO -->
+    <div class="section-title" style="margin-top:28px;">Autoevaluación y registro de sesión</div>
+
+    <div class="context-box" style="margin-bottom:14px;border-left-color:var(--green);">
+      <div class="ctx-title" style="color:var(--green);">📤 Registro automático</div>
+      <p>Al completar tu autoevaluación y presionar <strong>Registrar sesión</strong>, tus datos
+      se enviarán automáticamente al concentrado del docente. Asegúrate de tener tu nombre y grupo correctos arriba.</p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      <span class="progress-label" id="progress-label">0 / 5 criterios marcados</span>
+    </div>
+
+    <!-- Autoevaluación rápida -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;" id="autoeval-wrap">
+      <!-- Se genera con JS -->
+    </div>
+
+    <!-- Calificación estimada -->
+    <div class="student-card" style="margin-bottom:14px;">
+      <div class="sc-title">📊 Autocalificación estimada</div>
+      <div class="sc-grid">
+        <div class="sc-field">
+          <label for="ae-cal">Calificación que te asignas (0–100)</label>
+          <input type="number" id="ae-cal" min="0" max="100" placeholder="Ej. 85" style="font-size:18px;font-weight:700;text-align:center;">
+        </div>
+        <div class="sc-field">
+          <label for="ae-obs">¿Qué mejorarías de tu trabajo de hoy?</label>
+          <input type="text" id="ae-obs" placeholder="Reflexión breve…" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="btn btn-primary btn-block" id="btn-send" onclick="registrarSesion()">
+        📤 Registrar sesión en el concentrado
+      </button>
+      <p class="submit-note">Tus datos se envían directamente al docente. Este paso es obligatorio para que quede evidencia de tu participación.</p>
+    </div>
+
+    <div class="send-status" id="send-status"></div>
+
+  </div>
+  <!-- /tabs -->
+
+  <!-- REFLEXIÓN FINAL -->
+  <div class="close-reflection">
+    <div class="cr-icon">🔍</div>
+    <div class="cr-title">Para cerrar la sesión — preguntas sin respuesta única</div>
+    <div class="cr-questions">
+      <div class="cr-q"><strong>¿Cambiará</strong> la forma en que buscas información a partir de hoy?</div>
+      <div class="cr-q"><strong>¿Alguna vez compartiste</strong> algo sin verificar de dónde venía?</div>
+      <div class="cr-q"><strong>¿Qué diferencia hay</strong> entre estar informado y estar bien informado?</div>
+      <div class="cr-q"><strong>¿Puede una fuente institucional</strong> estar equivocada? ¿Cómo lo sabrías?</div>
+    </div>
+    <p class="cr-note">
+      La desinformación no siempre es mentira total — a veces es verdad a medias,
+      sacada de contexto o simplemente desactualizada. <strong>Saber buscar bien
+      es una habilidad que se entrena, no un talento con el que se nace.</strong>
+      En la próxima sesión aplicaremos esa misma mirada crítica a los datos numéricos.
+    </p>
+  </div>
+
+  <div style="text-align:center;margin-top:32px;padding:20px;border-top:1px solid var(--border);">
+    <p style="font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;">
+      Cultura Digital II · Recursamiento · Sesión 2 de 4 · <span id="fecha-footer"></span>
+    </p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ══ GOOGLE FORMS — CONCENTRADO ══════════════════════════ */
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_3R6ofopEe1KFri8r7QBTCfYSLUruo8PXUSg57yYh0gxkoQ/formResponse';
+const FIELDS = {
+  nombre:    'entry.1239243431',
+  grupo:     'entry.2004441838',
+  materia:   'entry.452762832',
+  sesion:    'entry.1347797892',
+  cal:       'entry.1812449136',
+  correctas: 'entry.1660403267',
+  infr:      'entry.1865236519',
+  detalle:   'entry.1713710783',
+  obs:       'entry.319383385'
+};
+
+async function enviarASheets(datos) {
+  const body = new FormData();
+  Object.entries(datos).forEach(([k, v]) => body.append(FIELDS[k], v ?? ''));
+  try {
+    await fetch(FORM_URL, { method: 'POST', body, mode: 'no-cors' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/* ══ AUTOEVALUACIÓN ══════════════════════════════════════ */
+const AE_ITEMS = [
+  'Elegí una problemática real y busqué tres fuentes de tipos distintos.',
+  'Registré la URL completa, el autor o institución y la fecha de cada fuente.',
+  'Expresé la idea principal de cada fuente con mis propias palabras.',
+  'Evalué la confiabilidad de cada fuente con argumentos basados en criterios.',
+  'Escribí una conclusión reflexiva de al menos tres oraciones.'
+];
+
+(function buildAutoeval() {
+  const wrap = document.getElementById('autoeval-wrap');
+  AE_ITEMS.forEach((item, i) => {
+    wrap.innerHTML += `
+      <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;
+        background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+        cursor:pointer;font-size:13px;color:var(--text2);transition:background .2s;">
+        <input type="checkbox" id="ae${i}" onchange="updateAEProgress()"
+          style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+        <span>${item}</span>
+      </label>`;
+  });
+})();
+
+function updateAEProgress() {
+  let checked = 0;
+  AE_ITEMS.forEach((_, i) => { if (document.getElementById('ae'+i)?.checked) checked++; });
+  document.getElementById('progress-fill').style.width = (checked / AE_ITEMS.length * 100) + '%';
+  document.getElementById('progress-label').textContent = `${checked} / ${AE_ITEMS.length} criterios marcados`;
+}
+
+/* ══ REGISTRO DE SESIÓN ══════════════════════════════════ */
+let infractions = [], tabSwitches = 0, copyAttempts = 0;
+
+function getTs() {
+  return new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+
+function registerInfraction(tipo, msg) {
+  const ts = getTs();
+  infractions.push({ ts, tipo, msg });
+  document.getElementById('infr-count').textContent = infractions.length;
+  document.getElementById('infraction-badge').classList.add('visible');
+  document.getElementById('alert-icon').textContent  = tipo === 'tab' ? '👁️' : '📋';
+  document.getElementById('alert-title').textContent = tipo === 'tab' ? 'Cambio de ventana' : 'Copia detectada';
+  document.getElementById('alert-msg').textContent   = `${msg} — ${ts}`;
+  document.getElementById('alert-overlay').classList.add('show');
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { tabSwitches++; registerInfraction('tab', `Cambio de ventana #${tabSwitches}`); }
+});
+document.addEventListener('copy', e => { e.preventDefault(); copyAttempts++; registerInfraction('copy', `Copia #${copyAttempts}`); });
+document.addEventListener('paste', e => e.preventDefault());
+document.addEventListener('cut',   e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+function closeAlert() { document.getElementById('alert-overlay').classList.remove('show'); }
+
+async function registrarSesion() {
+  const nombre  = document.getElementById('fn').value.trim();
+  const grupo   = document.getElementById('fg').value.trim();
+  const materia = document.getElementById('fm').value.trim();
+  const calRaw  = document.getElementById('ae-cal').value.trim();
+  const obs     = document.getElementById('ae-obs').value.trim();
+
+  if (!nombre || !grupo) {
+    alert('Completa tu nombre y grupo antes de registrar la sesión.');
+    return;
+  }
+  if (!calRaw) {
+    alert('Escribe tu calificación estimada (0–100) antes de registrar.');
+    return;
+  }
+
+  const cal = parseInt(calRaw, 10);
+  let marcados = 0;
+  AE_ITEMS.forEach((_, i) => { if (document.getElementById('ae'+i)?.checked) marcados++; });
+
+  const detalleInfr = infractions.length > 0
+    ? infractions.map(x => `${x.ts}: ${x.msg}`).join(' | ')
+    : 'Sin infracciones';
+
+  const falladas = AE_ITEMS
+    .filter((_, i) => !document.getElementById('ae'+i)?.checked)
+    .map((t, _) => t)
+    .join(' / ') || 'Todos los criterios marcados';
+
+  const btn = document.getElementById('btn-send');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando…';
+
+  const ok = await enviarASheets({
+    nombre,
+    grupo,
+    materia,
+    sesion:    'Sesión 2 — Investigación digital',
+    cal:       cal,
+    correctas: `${marcados}/${AE_ITEMS.length} criterios`,
+    infr:      infractions.length,
+    detalle:   detalleInfr,
+    obs:       `Autocalificación: ${cal}/100. ${obs ? 'Reflexión: ' + obs : ''} | Criterios no marcados: ${falladas}`
+  });
+
+  const statusEl = document.getElementById('send-status');
+  if (ok) {
+    statusEl.className = 'send-status ok';
+    statusEl.textContent = '✓ Sesión registrada correctamente en el concentrado del docente.';
+    btn.textContent = '✓ Registrado';
+  } else {
+    statusEl.className = 'send-status fail';
+    statusEl.textContent = '⚠ No se pudo conectar. Avisa al docente para registrar manualmente.';
+    btn.disabled = false;
+    btn.textContent = '📤 Reintentar';
+  }
+}
+
+/* ══ VERIFICACIÓN RÁPIDA ═════════════════════════════════ */
+const VERIF_ANSWERS = { vq1:'b', vq2:'b', vq3:'b', vq4:'c', vq5:'c' };
+
+function verificar(id, correcta, msgOk, msgFail) {
+  const sel = document.querySelector(`input[name="${id}"]:checked`);
+  if (!sel) { alert('Selecciona una opción primero.'); return; }
+  const fb = document.getElementById(`${id}-fb`);
+  const ok = sel.value === correcta;
+  fb.className = 'vc-feedback ' + (ok ? 'ok' : 'fail');
+  fb.textContent = ok ? msgOk : msgFail;
+  fb.style.display = 'block';
+}
+
+/* ══ TABS ════════════════════════════════════════════════ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: btn.closest('.tabs').offsetTop - 70, behavior: 'smooth' });
+}
+
+/* ══ TEMPORIZADOR ════════════════════════════════════════ */
+let secs = 60 * 60;
+const timerEl = document.getElementById('timer');
+const iv = setInterval(() => {
+  secs--;
+  const m = String(Math.floor(secs / 60)).padStart(2, '0');
+  const s = String(secs % 60).padStart(2, '0');
+  timerEl.textContent = `⏱ ${m}:${s}`;
+  if (secs <= 600 && secs > 300) timerEl.className = 'warn';
+  if (secs <= 300) timerEl.className = 'danger';
+  if (secs <= 0)   clearInterval(iv);
+}, 1000);
+
+/* ══ TEMA ════════════════════════════════════════════════ */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+  try { localStorage.setItem('ev-theme', isDark ? 'light' : 'dark'); } catch(e){}
+}
+(function() {
+  try {
+    const t = localStorage.getItem('ev-theme');
+    if (t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('theme-toggle').textContent = t === 'dark' ? '☀️' : '🌙';
+    }
+  } catch(e){}
+})();
+
+/* ══ FECHA Y MARCA DE AGUA ═══════════════════════════════ */
+const fecha = new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'long', year:'numeric' });
+document.getElementById('fecha-hoy').textContent    = fecha;
+document.getElementById('fecha-footer').textContent = fecha;
+document.getElementById('ff').value = new Date().toISOString().split('T')[0];
+
+(function() {
+  const w = document.getElementById('wmInner');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('span');
+    s.className = 'wm-text';
+    s.textContent = 'CULTURA DIGITAL II';
+    w.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
