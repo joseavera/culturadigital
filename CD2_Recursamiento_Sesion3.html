@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sesión 3 — Cultura Digital II · Recursamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+
+/* ══ EXTRAS SESIÓN 3 ══════════════════════════════════════ */
+
+/* Mapa de ruta */
+.roadmap {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 0; margin: 18px 0;
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.rm-item {
+  padding: 14px; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 5px;
+}
+.rm-item:last-child { border-right: none; }
+.rm-item.done   { opacity: .5; }
+.rm-item.active { background: var(--accent-glow); border-right-color: var(--accent); }
+.rm-num   { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--text2); }
+.rm-item.active .rm-num { color: var(--accent); }
+.rm-item.done   .rm-num { color: var(--green);  }
+.rm-title { font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.rm-pill  {
+  display: inline-block; font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border2);
+  color: var(--text2); width: fit-content;
+}
+.rm-item.active .rm-pill { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rm-item.done   .rm-pill { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 0; border-bottom: 2px solid var(--border);
+  margin-bottom: 24px; overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  padding: 10px 20px; border: none; background: transparent; color: var(--text2);
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; transition: color var(--transition), border-color var(--transition);
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Bloques de concepto */
+.concept-block {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 18px 22px;
+}
+.concept-block.teal   { border-left-color: var(--cyan);   }
+.concept-block.green  { border-left-color: var(--green);  }
+.concept-block.yellow { border-left-color: var(--yellow); }
+.concept-block.blue   { border-left-color: #5dade2;       }
+.cb-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 4px; font-weight: 600;
+}
+.concept-block.teal   .cb-label { color: var(--cyan);   }
+.concept-block.green  .cb-label { color: var(--green);  }
+.concept-block.yellow .cb-label { color: var(--yellow); }
+.concept-block.blue   .cb-label { color: #5dade2;       }
+.cb-term { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.cb-def  { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
+.cb-def strong { color: var(--text); }
+.cb-def em     { color: var(--accent); font-style: normal; font-weight: 600; }
+
+/* Grids */
+.two-col   { display: grid; grid-template-columns: 1fr 1fr;       gap: 14px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr;   gap: 12px; }
+.four-col  { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+
+/* Fórmula visual */
+.formula-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.fc-formula {
+  font-family: var(--font-mono); font-size: 22px; font-weight: 700;
+  color: var(--accent); white-space: nowrap;
+}
+.fc-sep { width: 1px; height: 44px; background: var(--border); flex-shrink: 0; }
+.fc-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.fc-desc strong { color: var(--text); }
+
+/* Datos visuales (conjunto de números) */
+.data-row {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  font-family: var(--font-mono); font-size: 13px; color: #e8e4dc;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.data-val {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 3px; padding: 3px 10px; color: #fff; font-weight: 600;
+}
+.data-val.hi  { background: rgba(124,106,247,.3); border-color: var(--accent); color: var(--accent); }
+.data-val.med { background: rgba(34,197,94,.25);  border-color: var(--green);  color: var(--green);  }
+.data-val.lo  { background: rgba(239,68,68,.25);  border-color: var(--red);    color: var(--red);    }
+.data-lbl     { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-right: 4px; }
+
+/* Paso a paso */
+.step-list { display: flex; flex-direction: column; gap: 8px; }
+.step-item { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+.step-num  {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #fff;
+  background: var(--accent); min-width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.step-item strong { color: var(--text); }
+
+/* Tarjeta de gráfica */
+.chart-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.cc-icon  { font-size: 24px; }
+.cc-name  { font-size: 13px; font-weight: 700; color: var(--text); }
+.cc-use   { font-size: 11.5px; color: var(--text2); line-height: 1.5; }
+.cc-when  { font-family: var(--font-mono); font-size: 10px; color: var(--accent); margin-top: 2px; }
+
+/* Sección de evaluación */
+.eval-section-banner {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border); border-top: 3px solid var(--accent);
+  border-radius: var(--radius); padding: 16px 22px; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.esb-icon  { font-size: 22px; flex-shrink: 0; }
+.esb-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; font-weight: 700; }
+.esb-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.esb-sub   { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.esb-pts   {
+  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent); background: var(--accent-glow); border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 5px 14px; white-space: nowrap;
+}
+
+/* Tabla de medidas */
+.medidas-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 14px 0; }
+.medidas-table th {
+  background: var(--bg); color: #fff; font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 10px 14px; text-align: left;
+}
+.medidas-table th:first-child { border-radius: 4px 0 0 0; }
+.medidas-table th:last-child  { border-radius: 0 4px 0 0; }
+.medidas-table td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text2); line-height: 1.5; vertical-align: top;
+}
+.medidas-table tr:last-child td { border-bottom: none; }
+.medidas-table tr:nth-child(even) td { background: var(--bg2); }
+.medidas-table td strong  { color: var(--text); }
+.medidas-table td .resalt { color: var(--accent); font-family: var(--font-mono); font-weight: 700; font-size: 14px; }
+
+/* Envío a Sheets */
+.send-status {
+  display: none; margin-top: 12px; padding: 10px 16px;
+  border-radius: var(--radius-sm); font-size: 12px;
+  font-family: var(--font-mono); text-align: center;
+}
+.send-status.ok   { background: var(--green-bg);  border: 1px solid var(--green);  color: var(--green);  display: block; }
+.send-status.fail { background: var(--yellow-bg); border: 1px solid var(--yellow); color: var(--yellow); display: block; }
+
+/* Cierre */
+.close-reflection {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 28px; margin-top: 32px; text-align: center;
+}
+.cr-icon  { font-size: 32px; margin-bottom: 10px; }
+.cr-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.cr-questions { display: flex; flex-direction: column; gap: 8px; text-align: left; max-width: 520px; margin: 0 auto 16px; }
+.cr-q { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; color: var(--text2); line-height: 1.5; }
+.cr-q strong { color: var(--text); }
+.cr-note { font-size: 12px; color: var(--text2); font-style: italic; line-height: 1.6; max-width: 480px; margin: 0 auto; }
+
+@media (max-width: 640px) {
+  .roadmap, .four-col { grid-template-columns: 1fr 1fr; }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wm" aria-hidden="true"><div class="wm-inner" id="wmInner"></div></div>
+
+<!-- OVERLAY -->
+<div id="alert-overlay">
+  <div class="alert-box">
+    <div class="alert-icon" id="alert-icon">⚠️</div>
+    <h3 id="alert-title">Actividad detectada</h3>
+    <p id="alert-msg">Se registró una acción no permitida.</p>
+    <button class="btn btn-primary" onclick="closeAlert()">Entendido — continuar</button>
+  </div>
+</div>
+
+<!-- BARRA SUPERIOR -->
+<nav id="topbar">
+  <div class="tb-left">
+    <span class="tb-materia">💻 Cultura Digital II</span>
+    <span class="tb-semestre">Recursamiento · Sesión 3 de 4</span>
+    <span id="infraction-badge">⚠ infracciones: <span id="infr-count">0</span></span>
+  </div>
+  <div class="tb-right">
+    <div id="timer">⏱ 60:00</div>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- CABECERA -->
+  <header class="eval-header">
+    <div class="eval-tag">📅 Sesión 3 · Recursamiento</div>
+    <h1>Datos, estadística<br>y representación gráfica</h1>
+    <p class="eval-sub">Medidas de tendencia central · Rango · Gráficas estadísticas · Hoja de cálculo colaborativa</p>
+    <div class="eval-meta">
+      <span>⏱ 1 hora</span>
+      <span>📊 10 reactivos calificados</span>
+      <span>🎯 100 puntos</span>
+      <span>📅 <span id="fecha-hoy"></span></span>
+    </div>
+  </header>
+
+  <!-- MAPA DE RUTA -->
+  <div class="section-title">Avance del recursamiento</div>
+  <div class="roadmap">
+    <div class="rm-item done">
+      <div class="rm-num">Sesión 1</div>
+      <div class="rm-title">Colaboración y herramientas libres</div>
+      <div class="rm-pill">✓ Completada</div>
+    </div>
+    <div class="rm-item done">
+      <div class="rm-num">Sesión 2</div>
+      <div class="rm-title">Investigación digital crítica</div>
+      <div class="rm-pill">✓ Completada</div>
+    </div>
+    <div class="rm-item active">
+      <div class="rm-num">Sesión 3</div>
+      <div class="rm-title">Datos, estadística y gráficas</div>
+      <div class="rm-pill">HOY</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-num">Sesión 4</div>
+      <div class="rm-title">Cierre y evaluación final</div>
+      <div class="rm-pill">Próxima</div>
+    </div>
+  </div>
+
+  <!-- DATOS DEL ALUMNO -->
+  <section class="student-card">
+    <div class="sc-title">👤 Identificación</div>
+    <div class="sc-grid">
+      <div class="sc-field">
+        <label for="fn">Nombre completo</label>
+        <input type="text" id="fn" placeholder="Apellidos, Nombre(s)" autocomplete="off">
+      </div>
+      <div class="sc-field">
+        <label for="fg">Grupo</label>
+        <input type="text" id="fg" placeholder="Ej. 2°B" autocomplete="off">
+      </div>
+      <div class="sc-field">
+        <label for="fm">Materia</label>
+        <input type="text" id="fm" value="Cultura Digital II">
+      </div>
+      <div class="sc-field">
+        <label for="ff">Fecha</label>
+        <input type="date" id="ff">
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('conceptos',this)">📖 Conceptos</button>
+    <button class="tab-btn" onclick="showTab('medidas',this)">🔢 Medidas</button>
+    <button class="tab-btn" onclick="showTab('graficas',this)">📊 Gráficas</button>
+    <button class="tab-btn" onclick="showTab('evaluacion',this)">✏️ Evaluación</button>
+    <button class="tab-btn" onclick="showTab('resultado',this)" id="tab-btn-resultado" style="display:none;">🎯 Resultado</button>
+  </div>
+
+  <!-- ══════ TAB 1: CONCEPTOS ══════ -->
+  <div id="tab-conceptos" class="tab-panel active">
+
+    <div class="section-title">¿Qué son los datos estadísticos?</div>
+
+    <div class="concept-block" style="margin-bottom:14px;">
+      <div class="cb-label">📐 Idea central</div>
+      <div class="cb-term">Estadística descriptiva</div>
+      <div class="cb-def">
+        Es la rama de la estadística que se encarga de <strong>recopilar, organizar, resumir
+        y presentar datos</strong> de manera comprensible. No predice ni infiere — describe
+        lo que ya ocurrió. Sus herramientas principales son las <em>medidas de tendencia central</em>
+        (que resumen el "centro" de los datos) y las <em>representaciones gráficas</em>
+        (que muestran la distribución visualmente).
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="concept-block teal">
+        <div class="cb-label">📂 Datos cuantitativos</div>
+        <div class="cb-term">Numéricos</div>
+        <div class="cb-def">
+          Representan cantidades medibles. Se pueden sumar, promediar y ordenar.
+          Ejemplos: calificaciones, temperatura, nivel de riesgo de una especie (1–5),
+          número de habitantes, precios.
+        </div>
+      </div>
+      <div class="concept-block yellow">
+        <div class="cb-label">🏷️ Datos cualitativos</div>
+        <div class="cb-term">Categóricos</div>
+        <div class="cb-def">
+          Describen características o categorías, no cantidades. No se promedian.
+          Ejemplos: tipo de especie (mamífero, reptil), color, género, nombre de una playa.
+          La <strong>moda</strong> es la única medida de tendencia central que aplica a este tipo.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-block green">
+      <div class="cb-label">🎯 ¿Por qué importa en Cultura Digital?</div>
+      <div class="cb-term">Datos + herramientas digitales = decisiones informadas</div>
+      <div class="cb-def">
+        En este propósito formativo usamos hojas de cálculo colaborativas (CryptPad Spreadsheet,
+        Google Sheets) para organizar datos sobre problemáticas reales — especies en peligro,
+        contaminación, uso del celular — y generamos gráficas que comunican visualmente
+        lo que los números solos no muestran con claridad.
+        <br><br>
+        <strong>Ejemplo real del curso:</strong> registrar el nivel de riesgo de 5 especies
+        en una hoja compartida, calcular el promedio con <code style="font-family:var(--font-mono);background:var(--bg3);padding:1px 6px;border-radius:3px;">=PROMEDIO()</code>
+        y crear una gráfica de barras para presentarlo al grupo.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 2: MEDIDAS ══════ -->
+  <div id="tab-medidas" class="tab-panel">
+
+    <div class="section-title">Medidas de tendencia central y de dispersión</div>
+
+    <!-- Tabla resumen -->
+    <table class="medidas-table">
+      <thead>
+        <tr>
+          <th>Medida</th>
+          <th>Tipo</th>
+          <th>¿Cómo se calcula?</th>
+          <th>Fórmula</th>
+          <th>Aplica a datos…</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Media</strong></td>
+          <td>Tendencia central</td>
+          <td>Suma todos los valores y divide entre la cantidad de datos</td>
+          <td><span class="resalt">Σx ÷ n</span></td>
+          <td>Numéricos</td>
+        </tr>
+        <tr>
+          <td><strong>Mediana</strong></td>
+          <td>Tendencia central</td>
+          <td>Ordena de menor a mayor y encuentra el valor del centro</td>
+          <td><span class="resalt">Posición central</span></td>
+          <td>Numéricos</td>
+        </tr>
+        <tr>
+          <td><strong>Moda</strong></td>
+          <td>Tendencia central</td>
+          <td>Identifica el valor que más se repite</td>
+          <td><span class="resalt">Máx. frecuencia</span></td>
+          <td>Numéricos y cualitativos</td>
+        </tr>
+        <tr>
+          <td><strong>Rango</strong></td>
+          <td style="color:var(--yellow);font-weight:600;">Dispersión</td>
+          <td>Resta el valor mínimo al valor máximo</td>
+          <td><span class="resalt">Máx − Mín</span></td>
+          <td>Numéricos</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Media -->
+    <div class="eval-section-banner">
+      <span class="esb-icon">📐</span>
+      <div>
+        <div class="esb-label">Medida 1</div>
+        <div class="esb-title">Media aritmética — el promedio</div>
+        <div class="esb-sub">La más usada. Puede verse distorsionada por valores extremos.</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:18px;">
+      <div>
+        <div class="formula-card" style="margin-bottom:10px;">
+          <div class="fc-formula">x̄ = Σx ÷ n</div>
+          <div class="fc-sep"></div>
+          <div class="fc-desc">
+            <strong>Σx</strong> = suma de todos los valores<br>
+            <strong>n</strong> = cantidad de datos<br>
+            <strong>x̄</strong> = media (se lee "x barra")
+          </div>
+        </div>
+        <div class="step-list">
+          <div class="step-item"><span class="step-num">1</span><span><strong>Suma</strong> todos los valores del conjunto.</span></div>
+          <div class="step-item"><span class="step-num">2</span><span><strong>Cuenta</strong> cuántos datos hay (eso es n).</span></div>
+          <div class="step-item"><span class="step-num">3</span><span><strong>Divide</strong> la suma entre n.</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="context-box" style="border-left-color:var(--accent);">
+          <div class="ctx-title">📊 Ejemplo</div>
+          <p>Datos: <strong>4, 6, 8, 10, 12</strong></p>
+        </div>
+        <div class="data-row"><span class="data-lbl">Suma:</span><span class="data-val">4+6+8+10+12 = 40</span></div>
+        <div class="data-row"><span class="data-lbl">n =</span><span class="data-val">5 datos</span></div>
+        <div class="data-row"><span class="data-lbl">Media =</span><span class="data-val hi">40 ÷ 5 = 8</span></div>
+      </div>
+    </div>
+
+    <!-- Mediana -->
+    <div class="eval-section-banner">
+      <span class="esb-icon">📍</span>
+      <div>
+        <div class="esb-label">Medida 2</div>
+        <div class="esb-title">Mediana — el valor central</div>
+        <div class="esb-sub">No le afectan los valores extremos (outliers). Ideal cuando hay datos muy atípicos.</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:18px;">
+      <div class="step-list">
+        <div class="step-item"><span class="step-num">1</span><span><strong>Ordena</strong> los datos de menor a mayor.</span></div>
+        <div class="step-item"><span class="step-num">2</span><span>Si n es <strong>impar</strong>: la mediana es el dato en la posición (n+1)/2.</span></div>
+        <div class="step-item"><span class="step-num">3</span><span>Si n es <strong>par</strong>: la mediana es el promedio de los dos valores centrales.</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="context-box" style="border-left-color:var(--cyan);">
+          <div class="ctx-title" style="color:var(--cyan);">📊 Ejemplo (n impar)</div>
+          <p>Datos ordenados: <strong>7, 9, 11, 13, 15</strong></p>
+        </div>
+        <div class="data-row">
+          <span class="data-val">7</span><span class="data-val">9</span>
+          <span class="data-val med">11 ← centro</span>
+          <span class="data-val">13</span><span class="data-val">15</span>
+        </div>
+        <div class="data-row"><span class="data-lbl">Mediana =</span><span class="data-val hi">11</span></div>
+      </div>
+    </div>
+
+    <!-- Moda -->
+    <div class="eval-section-banner">
+      <span class="esb-icon">🔁</span>
+      <div>
+        <div class="esb-label">Medida 3</div>
+        <div class="esb-title">Moda — el valor más frecuente</div>
+        <div class="esb-sub">La única medida que aplica también a datos cualitativos. Puede no existir o haber varias modas.</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:18px;">
+      <div class="concept-block yellow">
+        <div class="cb-label">📌 Tipos de moda</div>
+        <div class="cb-def">
+          <strong>Sin moda:</strong> todos los valores aparecen una sola vez.<br>
+          <strong>Unimodal:</strong> un solo valor se repite más que el resto.<br>
+          <strong>Bimodal:</strong> dos valores empatados en frecuencia.<br>
+          <strong>Multimodal:</strong> más de dos valores con la misma frecuencia máxima.
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="context-box" style="border-left-color:var(--yellow);">
+          <div class="ctx-title" style="color:var(--yellow);">📊 Ejemplo</div>
+          <p>Datos: <strong>3, 5, 3, 8, 9, 3</strong></p>
+        </div>
+        <div class="data-row">
+          <span class="data-val hi">3</span><span class="data-val">5</span>
+          <span class="data-val hi">3</span><span class="data-val">8</span>
+          <span class="data-val">9</span><span class="data-val hi">3</span>
+        </div>
+        <div class="data-row"><span class="data-lbl">El 3 aparece</span><span class="data-val">3 veces</span><span class="data-lbl">Moda =</span><span class="data-val hi">3</span></div>
+      </div>
+    </div>
+
+    <!-- Rango -->
+    <div class="eval-section-banner">
+      <span class="esb-icon">📏</span>
+      <div>
+        <div class="esb-label">Medida de dispersión</div>
+        <div class="esb-title">Rango — amplitud del conjunto</div>
+        <div class="esb-sub">No es medida de tendencia central. Muestra qué tan separados están los datos extremos.</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="formula-card">
+        <div class="fc-formula" style="color:#5dade2;">R = Máx − Mín</div>
+        <div class="fc-sep"></div>
+        <div class="fc-desc">
+          Un rango <strong>grande</strong> → datos muy dispersos.<br>
+          Un rango <strong>pequeño</strong> → datos concentrados.
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="context-box" style="border-left-color:#5dade2;">
+          <div class="ctx-title" style="color:#5dade2;">📊 Ejemplo</div>
+          <p>Datos: <strong>4, 7, 2, 9, 5</strong></p>
+        </div>
+        <div class="data-row">
+          <span class="data-val lo">2 ← mín</span>
+          <span class="data-val">4</span><span class="data-val">5</span><span class="data-val">7</span>
+          <span class="data-val hi">9 ← máx</span>
+        </div>
+        <div class="data-row"><span class="data-lbl">Rango =</span><span class="data-val hi">9 − 2 = 7</span></div>
+      </div>
+    </div>
+
+    <div class="context-box" style="border-left-color:var(--yellow);">
+      <div class="ctx-title" style="color:var(--yellow);">⚠️ Error frecuente — no confundas</div>
+      <p>
+        El <strong>rango</strong> NO es una medida de tendencia central.
+        Media, mediana y moda sí lo son. Si la pregunta dice
+        "¿cuál de las siguientes es una medida de tendencia central?" y aparece el rango,
+        la respuesta correcta es alguna de las otras tres.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 3: GRÁFICAS ══════ -->
+  <div id="tab-graficas" class="tab-panel">
+
+    <div class="section-title">Tipos de gráficas estadísticas</div>
+
+    <div class="context-box" style="margin-bottom:18px;">
+      <div class="ctx-title">📌 ¿Para qué sirven las gráficas?</div>
+      <p>
+        Una gráfica traduce números en imagen. Permite detectar <strong>patrones, comparaciones
+        y tendencias</strong> que en una tabla de datos son difíciles de ver.
+        Elegir el tipo incorrecto de gráfica puede llevar a interpretaciones erróneas —
+        por eso importa saber cuándo usar cada una.
+      </p>
+    </div>
+
+    <div class="four-col" style="margin-bottom:18px;">
+      <div class="chart-card">
+        <div class="cc-icon">📊</div>
+        <div class="cc-name">Gráfica de barras</div>
+        <div class="cc-use">Compara cantidades entre categorías diferentes. Cada barra representa una categoría.</div>
+        <div class="cc-when">Cuándo: comparar, frecuencias, resultados por grupo</div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-icon">📈</div>
+        <div class="cc-name">Gráfica de líneas</div>
+        <div class="cc-use">Muestra cómo cambia un valor a lo largo del tiempo. Conecta puntos en secuencia.</div>
+        <div class="cc-when">Cuándo: tendencias, evolución temporal, series de datos</div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-icon">🥧</div>
+        <div class="cc-name">Gráfica de pastel</div>
+        <div class="cc-use">Muestra partes de un todo en porcentajes. Útil con pocas categorías (máx. 6).</div>
+        <div class="cc-when">Cuándo: proporciones, porcentajes, composición de un total</div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-icon">📉</div>
+        <div class="cc-name">Histograma</div>
+        <div class="cc-use">Muestra la distribución de frecuencias en intervalos continuos. Sin separación entre barras.</div>
+        <div class="cc-when">Cuándo: distribución de datos continuos, rangos de edad, peso, temperatura</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="concept-block green">
+        <div class="cb-label">🛠️ En herramientas digitales</div>
+        <div class="cb-def">
+          En <strong>CryptPad</strong> (hoja de cálculo) o Google Sheets:
+          seleccionas los datos → Insertar → Gráfico → eliges el tipo.
+          La herramienta calcula los ejes y la escala automáticamente.
+          Lo importante es elegir el tipo correcto <em>antes</em> de insertar.
+        </div>
+      </div>
+      <div class="concept-block blue">
+        <div class="cb-label">📝 Para la evaluación</div>
+        <div class="cb-def">
+          Cuando te pregunten qué gráfica usar para mostrar
+          <strong>cambio en el tiempo</strong> → líneas.
+          Para <strong>comparar categorías</strong> → barras.
+          Para <strong>partes de un todo</strong> → pastel.
+          Para <strong>distribución de datos continuos</strong> → histograma.
+        </div>
+      </div>
+    </div>
+
+    <div class="context-box">
+      <div class="ctx-title">💡 Fórmulas de hoja de cálculo que debes conocer</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+        <div class="data-row" style="font-size:12px;">
+          <span class="data-lbl">Media:</span>
+          <span class="data-val">=PROMEDIO(H2:H6)</span>
+          <span style="color:var(--text2);">Calcula el promedio del rango de celdas</span>
+        </div>
+        <div class="data-row" style="font-size:12px;">
+          <span class="data-lbl">Máximo:</span>
+          <span class="data-val">=MAX(H2:H6)</span>
+          <span style="color:var(--text2);">Encuentra el valor más alto</span>
+        </div>
+        <div class="data-row" style="font-size:12px;">
+          <span class="data-lbl">Mínimo:</span>
+          <span class="data-val">=MIN(H2:H6)</span>
+          <span style="color:var(--text2);">Encuentra el valor más bajo</span>
+        </div>
+        <div class="data-row" style="font-size:12px;">
+          <span class="data-lbl">Rango:</span>
+          <span class="data-val">=MAX(H2:H6)-MIN(H2:H6)</span>
+          <span style="color:var(--text2);">Máximo menos mínimo en una sola fórmula</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════ TAB 4: EVALUACIÓN ══════ -->
+  <div id="tab-evaluacion" class="tab-panel">
+
+    <div class="eval-section-banner" style="border-top-color:var(--accent);">
+      <span class="esb-icon">✏️</span>
+      <div>
+        <div class="esb-label">Evaluación de sesión</div>
+        <div class="esb-title">10 reactivos · Opción múltiple</div>
+        <div class="esb-sub">Lee con cuidado. Tus respuestas se registran individualmente en el concentrado del docente.</div>
+      </div>
+      <div class="esb-pts">10 pts c/u · 100 total</div>
+    </div>
+
+    <div class="context-box" style="border-left-color:var(--cyan);margin-bottom:18px;">
+      <div class="ctx-title" style="color:var(--cyan);">📌 Instrucciones</div>
+      <p>Responde los 10 reactivos. Al presionar <strong>Calificar y registrar</strong>,
+      tu resultado y el detalle de cada respuesta se enviarán automáticamente al docente.
+      No podrás modificar tus respuestas después de calificar.</p>
+    </div>
+
+    <!-- PROGRESO -->
+    <div class="progress-wrap">
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      <span class="progress-label" id="progress-label">0 / 10 respondidas</span>
+    </div>
+
+    <!-- ── REACTIVOS ── -->
+
+    <!-- Q1 -->
+    <div class="question-card" id="qc1">
+      <div class="q-number">Reactivo 01 de 10</div>
+      <p class="q-text">¿Cuál de las siguientes es una <strong>medida de tendencia central</strong>?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Rango</span></label>
+        <label class="option"><input type="radio" name="q1" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Moda</span></label>
+        <label class="option"><input type="radio" name="q1" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Desviación estándar</span></label>
+        <label class="option"><input type="radio" name="q1" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Varianza</span></label>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-card" id="qc2">
+      <div class="q-number">Reactivo 02 de 10</div>
+      <p class="q-text">La <strong>media aritmética</strong> de los números 4, 6, 8, 10 y 12 es:</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">6</span></label>
+        <label class="option"><input type="radio" name="q2" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">8</span></label>
+        <label class="option"><input type="radio" name="q2" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">9</span></label>
+        <label class="option"><input type="radio" name="q2" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">10</span></label>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-card" id="qc3">
+      <div class="q-number">Reactivo 03 de 10</div>
+      <p class="q-text">Si un conjunto de datos tiene los valores <code style="font-family:var(--font-mono);background:var(--bg3);padding:1px 6px;border-radius:3px;">3, 5, 3, 8, 9, 3</code>, ¿cuál es la <strong>moda</strong>?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">3 — porque es el valor que más se repite</span></label>
+        <label class="option"><input type="radio" name="q3" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">5 — porque es el valor del centro</span></label>
+        <label class="option"><input type="radio" name="q3" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">6 — porque es el promedio de todos los valores</span></label>
+        <label class="option"><input type="radio" name="q3" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">8 — porque es el valor más alto del centro</span></label>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-card" id="qc4">
+      <div class="q-number">Reactivo 04 de 10</div>
+      <p class="q-text">¿Cuál es la <strong>mediana</strong> de los datos ordenados <code style="font-family:var(--font-mono);background:var(--bg3);padding:1px 6px;border-radius:3px;">7, 9, 11, 13, 15</code>?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">11 — es el valor que ocupa la posición central (3 de 5)</span></label>
+        <label class="option"><input type="radio" name="q4" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">9 — es el segundo valor del conjunto</span></label>
+        <label class="option"><input type="radio" name="q4" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">13 — es el cuarto valor del conjunto</span></label>
+        <label class="option"><input type="radio" name="q4" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">12 — es el promedio de 9 y 15</span></label>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-card" id="qc5">
+      <div class="q-number">Reactivo 05 de 10</div>
+      <p class="q-text">¿Cuál es el <strong>rango</strong> del conjunto de datos <code style="font-family:var(--font-mono);background:var(--bg3);padding:1px 6px;border-radius:3px;">4, 7, 2, 9, 5</code>?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q5" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">7 — porque 9 − 2 = 7</span></label>
+        <label class="option"><input type="radio" name="q5" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">5 — porque es el valor del centro</span></label>
+        <label class="option"><input type="radio" name="q5" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">5.4 — porque es el promedio de todos los datos</span></label>
+        <label class="option"><input type="radio" name="q5" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">9 — porque es el valor máximo del conjunto</span></label>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-card" id="qc6">
+      <div class="q-number">Reactivo 06 de 10</div>
+      <p class="q-text">¿Qué tipo de gráfica es más adecuada para mostrar cómo ha cambiado la población de una especie durante los últimos 10 años?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q6" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Gráfica de pastel — porque divide el total en partes</span></label>
+        <label class="option"><input type="radio" name="q6" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Gráfica de líneas — porque muestra la evolución en el tiempo</span></label>
+        <label class="option"><input type="radio" name="q6" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Histograma — porque es el único que acepta datos de años</span></label>
+        <label class="option"><input type="radio" name="q6" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Gráfica de barras — porque compara las especies entre sí</span></label>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-card" id="qc7">
+      <div class="q-number">Reactivo 07 de 10</div>
+      <p class="q-text">¿En cuál de estos casos conviene usar la <strong>mediana</strong> en lugar de la media?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q7" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Cuando todos los datos son muy similares y no hay valores extremos.</span></label>
+        <label class="option"><input type="radio" name="q7" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Cuando hay valores extremos muy altos o bajos que distorsionarían el promedio.</span></label>
+        <label class="option"><input type="radio" name="q7" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Cuando los datos son cualitativos como nombres o colores.</span></label>
+        <label class="option"><input type="radio" name="q7" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Cuando se necesita calcular la diferencia entre el dato máximo y el mínimo.</span></label>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-card" id="qc8">
+      <div class="q-number">Reactivo 08 de 10</div>
+      <p class="q-text">Un equipo registra el nivel de riesgo (1–5) de seis especies: Vaquita marina: 5, Ajolote: 4, Jaguar: 3, Lobo mexicano: 4, Tortuga marina: 5, Guacamaya roja: 2. ¿Cuál es el <strong>rango</strong> del nivel de riesgo?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q8" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">3 — diferencia entre el nivel máximo (5) y el mínimo (2)</span></label>
+        <label class="option"><input type="radio" name="q8" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">4 — porque es el valor que más se repite</span></label>
+        <label class="option"><input type="radio" name="q8" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">3.83 — porque es el promedio de todos los niveles</span></label>
+        <label class="option"><input type="radio" name="q8" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">5 — porque es el nivel más alto registrado</span></label>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-card" id="qc9">
+      <div class="q-number">Reactivo 09 de 10</div>
+      <p class="q-text">¿Qué fórmula debes usar en una hoja de cálculo para obtener el <strong>promedio</strong> de las celdas H2 a H6?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q9" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">=SUMA(H2:H6)</span></label>
+        <label class="option"><input type="radio" name="q9" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">=MAX(H2:H6)</span></label>
+        <label class="option"><input type="radio" name="q9" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">=PROMEDIO(H2:H6)</span></label>
+        <label class="option"><input type="radio" name="q9" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">=MEDIA(H2:H6)</span></label>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question-card" id="qc10">
+      <div class="q-number">Reactivo 10 de 10</div>
+      <p class="q-text">Menciona dos tipos de gráficas que se pueden usar para representar datos estadísticos. ¿Cuál de las siguientes opciones contiene solo ejemplos válidos?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q10" value="a" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Mapa conceptual y diagrama de Venn</span></label>
+        <label class="option"><input type="radio" name="q10" value="b" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Gráfica de barras e histograma</span></label>
+        <label class="option"><input type="radio" name="q10" value="c" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Tabla de datos y cuadro comparativo</span></label>
+        <label class="option"><input type="radio" name="q10" value="d" onchange="updateProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Diagrama de flujo y mapa mental</span></label>
+      </div>
+    </div>
+
+    <!-- BOTÓN -->
+    <div class="submit-wrap">
+      <button class="btn btn-primary btn-block" id="btn-submit" onclick="calificar()">
+        🎯 Calificar y registrar resultado
+      </button>
+      <p class="submit-note">Responde los 10 reactivos antes de calificar. El resultado se enviará automáticamente al docente.</p>
+    </div>
+
+    <div class="send-status" id="send-status"></div>
+
+  </div>
+
+  <!-- ══════ TAB 5: RESULTADO ══════ -->
+  <div id="tab-resultado" class="tab-panel">
+
+    <div id="result-panel" style="display:block;">
+
+      <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:6px;color:var(--text);">Resultado de la sesión 3</h2>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin:18px 0;">
+        <span id="res-score" style="font-family:var(--font-mono);font-size:4rem;font-weight:800;color:var(--accent);line-height:1;">—</span>
+        <p id="res-pct" style="font-size:14px;color:var(--text2);"></p>
+        <div class="result-rank" id="res-rank"></div>
+      </div>
+
+      <p id="res-name" style="font-size:17px;font-weight:700;color:var(--text);text-align:center;"></p>
+      <p id="res-meta" style="font-size:13px;color:var(--text2);text-align:center;margin-top:4px;"></p>
+
+      <!-- Desglose de respuestas -->
+      <div class="breakdown" style="margin-top:24px;">
+        <h3>Detalle de respuestas</h3>
+        <div id="bd-rows"></div>
+      </div>
+
+      <!-- Infracciones -->
+      <div id="infraction-block" style="margin-top:18px;"></div>
+
+      <!-- Reflexión -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-top:22px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-18px;left:24px;font-size:80px;color:var(--accent);opacity:.1;font-family:Georgia,serif;line-height:1;pointer-events:none;">"</div>
+        <p style="font-size:15px;font-style:italic;color:var(--text);line-height:1.75;margin-bottom:10px;">
+          Los números no hablan solos. Son las preguntas que les hacemos las que les dan significado.
+        </p>
+        <p style="font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:.08em;">
+          — Cultura Digital II · Sesión 3
+        </p>
+      </div>
+
+      <div style="background:var(--accent-glow);border:1px solid var(--accent);border-radius:var(--radius);padding:18px 22px;margin-top:14px;font-size:14px;color:var(--text);line-height:1.7;text-align:center;">
+        Organizaste, calculaste y representaste datos. Eso es exactamente lo que hace
+        quien trabaja con información de forma responsable. En la última sesión integrarás
+        todo lo visto en el curso — colaboración, investigación y análisis — en un
+        <strong>producto digital de difusión</strong>. Llegas con bases sólidas.
+      </div>
+
+      <div class="submit-wrap" style="margin-top:24px;">
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir resultado</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REFLEXIÓN FINAL -->
+  <div class="close-reflection">
+    <div class="cr-icon">📊</div>
+    <div class="cr-title">Para cerrar — más allá de los cálculos</div>
+    <div class="cr-questions">
+      <div class="cr-q"><strong>¿Un promedio alto</strong> siempre significa que todo el grupo le fue bien?</div>
+      <div class="cr-q"><strong>Si el nivel de riesgo promedio</strong> de las especies es 3, ¿eso significa que ninguna está en peligro crítico?</div>
+      <div class="cr-q"><strong>¿Qué información pierde</strong> un dato cuando lo resumimos en una sola medida?</div>
+      <div class="cr-q"><strong>¿Qué gráfica elegirías</strong> para que tu comunidad entienda la contaminación local sin conocer estadística?</div>
+    </div>
+    <p class="cr-note">
+      La estadística no inventa la realidad — la describe. Y describir bien requiere elegir
+      la medida correcta, la gráfica correcta y la pregunta correcta.
+      <strong>Esa elección es ya una decisión ética.</strong>
+    </p>
+  </div>
+
+  <div style="text-align:center;margin-top:32px;padding:20px;border-top:1px solid var(--border);">
+    <p style="font-family:var(--font-mono);font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;">
+      Cultura Digital II · Recursamiento · Sesión 3 de 4 · <span id="fecha-footer"></span>
+    </p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ══ CLAVES ══════════════════════════════════════════════ */
+const ANSWERS = {
+  q1:'b', q2:'b', q3:'a', q4:'a', q5:'a',
+  q6:'b', q7:'b', q8:'a', q9:'c', q10:'b'
+};
+
+const QLABELS = {
+  q1:  '¿Cuál es una medida de tendencia central?',
+  q2:  'Media de 4,6,8,10,12',
+  q3:  'Moda de 3,5,3,8,9,3',
+  q4:  'Mediana de 7,9,11,13,15',
+  q5:  'Rango de 4,7,2,9,5',
+  q6:  'Gráfica para evolución en el tiempo',
+  q7:  '¿Cuándo usar mediana en lugar de media?',
+  q8:  'Rango del nivel de riesgo de especies',
+  q9:  'Fórmula de promedio en hoja de cálculo',
+  q10: 'Dos tipos de gráficas estadísticas válidas'
+};
+
+const OPTS = {
+  q1:  { a:'Rango', b:'Moda', c:'Desviación estándar', d:'Varianza' },
+  q2:  { a:'6', b:'8', c:'9', d:'10' },
+  q3:  { a:'3 — más repetido', b:'5 — centro', c:'6 — promedio', d:'8 — más alto del centro' },
+  q4:  { a:'11 — posición central', b:'9 — segundo valor', c:'13 — cuarto valor', d:'12 — promedio de 9 y 15' },
+  q5:  { a:'7 (9−2)', b:'5 — valor central', c:'5.4 — promedio', d:'9 — valor máximo' },
+  q6:  { a:'Pastel', b:'Líneas — evolución en el tiempo', c:'Histograma', d:'Barras — compara categorías' },
+  q7:  { a:'Cuando datos son similares', b:'Cuando hay valores extremos', c:'Cuando datos son cualitativos', d:'Para calcular diferencia máx−mín' },
+  q8:  { a:'3 (5−2)', b:'4 — más frecuente', c:'3.83 — promedio', d:'5 — valor máximo' },
+  q9:  { a:'=SUMA(H2:H6)', b:'=MAX(H2:H6)', c:'=PROMEDIO(H2:H6)', d:'=MEDIA(H2:H6)' },
+  q10: { a:'Mapa conceptual y Venn', b:'Barras e histograma', c:'Tabla y cuadro comparativo', d:'Diagrama de flujo y mapa mental' }
+};
+
+const TOTAL = 10;
+const PTS   = 10;
+
+/* ══ GOOGLE FORMS ════════════════════════════════════════ */
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_3R6ofopEe1KFri8r7QBTCfYSLUruo8PXUSg57yYh0gxkoQ/formResponse';
+const F = {
+  nombre:    'entry.1239243431',
+  grupo:     'entry.2004441838',
+  materia:   'entry.452762832',
+  sesion:    'entry.1347797892',
+  cal:       'entry.1812449136',
+  correctas: 'entry.1660403267',
+  infr:      'entry.1865236519',
+  detalle:   'entry.1713710783',
+  obs:       'entry.319383385'
+};
+
+async function enviarASheets(datos) {
+  const body = new FormData();
+  Object.entries(F).forEach(([k, entry]) => body.append(entry, datos[k] ?? ''));
+  try {
+    await fetch(FORM_URL, { method:'POST', body, mode:'no-cors' });
+    return true;
+  } catch { return false; }
+}
+
+/* ══ INFRACCIONES ════════════════════════════════════════ */
+let infractions = [], tabSwitches = 0, copyAttempts = 0;
+
+function ts() {
+  return new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+
+function registerInfraction(tipo, msg) {
+  const t = ts();
+  infractions.push({ t, tipo, msg });
+  document.getElementById('infr-count').textContent = infractions.length;
+  document.getElementById('infraction-badge').classList.add('visible');
+  document.getElementById('alert-icon').textContent  = tipo === 'tab' ? '👁️' : '📋';
+  document.getElementById('alert-title').textContent = tipo === 'tab' ? 'Cambio de ventana' : 'Copia detectada';
+  document.getElementById('alert-msg').textContent   = `${msg} — ${t}`;
+  document.getElementById('alert-overlay').classList.add('show');
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { tabSwitches++; registerInfraction('tab', `Cambio de ventana #${tabSwitches}`); }
+});
+document.addEventListener('copy',       e => { e.preventDefault(); copyAttempts++; registerInfraction('copy', `Copia #${copyAttempts}`); });
+document.addEventListener('paste',      e => e.preventDefault());
+document.addEventListener('cut',        e => e.preventDefault());
+document.addEventListener('contextmenu',e => e.preventDefault());
+function closeAlert() { document.getElementById('alert-overlay').classList.remove('show'); }
+
+/* ══ PROGRESO ════════════════════════════════════════════ */
+function updateProgress() {
+  let n = 0;
+  for (let i = 1; i <= TOTAL; i++) {
+    const ok = !!document.querySelector(`input[name="q${i}"]:checked`);
+    if (ok) n++;
+    document.getElementById(`qc${i}`)?.classList.toggle('answered', ok);
+  }
+  document.getElementById('progress-fill').style.width  = (n / TOTAL * 100) + '%';
+  document.getElementById('progress-label').textContent = `${n} / ${TOTAL} respondidas`;
+}
+
+/* ══ CALIFICAR ═══════════════════════════════════════════ */
+async function calificar() {
+  let correctas = 0;
+  const detalleResp = []; // para Sheets: respuesta por pregunta
+  const bdRows = document.getElementById('bd-rows');
+  bdRows.innerHTML = '';
+
+  let num = 1;
+  for (const [key, correctVal] of Object.entries(ANSWERS)) {
+    const sel    = document.querySelector(`input[name="${key}"]:checked`);
+    const selVal = sel ? sel.value : null;
+    const isOk   = selVal === correctVal;
+    if (isOk) correctas++;
+
+    // Texto para el desglose en pantalla
+    const row = document.createElement('div');
+    row.className = 'bd-row';
+    row.innerHTML = `
+      <span class="bd-num">${String(num).padStart(2,'0')}</span>
+      <span class="bd-text">
+        ${QLABELS[key]}
+        <div class="bd-sel">Tu respuesta: ${selVal ? OPTS[key][selVal] : '<em>Sin responder</em>'}</div>
+        ${!isOk ? `<div class="bd-ans">✓ Correcta: ${OPTS[key][correctVal]}</div>` : ''}
+      </span>
+      <span class="bd-status ${isOk ? 'ok' : 'fail'}">${isOk ? '✓' : '✗'}</span>`;
+    bdRows.appendChild(row);
+
+    // Registro detallado para Sheets
+    const selTxt = selVal ? OPTS[key][selVal] : 'Sin responder';
+    detalleResp.push(`P${num}(${isOk ? '✓' : '✗'}): "${selTxt}"`);
+    num++;
+  }
+
+  const score = correctas * PTS;
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('res-pct').textContent   = `${correctas}/${TOTAL} correctas · ${score}/100 pts`;
+
+  const nombre  = document.getElementById('fn').value.trim() || 'Sin nombre';
+  const grupo   = document.getElementById('fg').value.trim();
+  const materia = document.getElementById('fm').value.trim();
+  const fecha   = document.getElementById('ff').value;
+
+  document.getElementById('res-name').textContent = nombre;
+  document.getElementById('res-meta').textContent = [grupo, materia, fecha].filter(Boolean).join(' · ');
+
+  const rk = document.getElementById('res-rank');
+  if      (score >= 90) { rk.className='result-rank rank-s'; rk.textContent='★ EXCELENTE'; }
+  else if (score >= 70) { rk.className='result-rank rank-a'; rk.textContent='▲ MUY BIEN';  }
+  else if (score >= 50) { rk.className='result-rank rank-b'; rk.textContent='● SUFICIENTE'; }
+  else                  { rk.className='result-rank rank-c'; rk.textContent='▼ A REPASAR'; }
+
+  // Bloque de infracciones
+  const iBlock = document.getElementById('infraction-block');
+  if (infractions.length > 0) {
+    iBlock.innerHTML = `
+      <div style="background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius);padding:14px 18px;">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;font-weight:600;">
+          ⚠ Infracciones registradas — ${infractions.length}
+        </div>
+        ${infractions.map(x => `<div style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid rgba(245,158,11,.15);">
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--yellow);">${x.t}</span> — ${x.msg}</div>`).join('')}
+      </div>`;
+  } else {
+    iBlock.innerHTML = `
+      <div style="background:var(--green-bg);border:1px solid var(--green);border-radius:var(--radius);padding:12px 18px;font-size:13px;color:var(--green);">
+        ✓ Sin infracciones registradas durante la evaluación.
+      </div>`;
+  }
+
+  // Enviar a Sheets
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando…';
+
+  const infrTxt = infractions.length > 0
+    ? infractions.map(x => `${x.t}: ${x.msg}`).join(' | ')
+    : 'Sin infracciones';
+
+  // Preguntas falladas (para el campo observaciones)
+  const falladas = Object.entries(ANSWERS)
+    .map(([k,c], i) => {
+      const s = document.querySelector(`input[name="${k}"]:checked`);
+      if (!s || s.value !== c) return `P${i+1}: ${QLABELS[k]}`;
+      return null;
+    })
+    .filter(Boolean)
+    .join(' | ') || 'Todas correctas';
+
+  const ok = await enviarASheets({
+    nombre,
+    grupo,
+    materia,
+    sesion:    'Sesión 3 — Estadística y gráficas',
+    cal:       score,
+    correctas: `${correctas}/${TOTAL}`,
+    infr:      infractions.length,
+    // Campo "detalle de infracciones" → infracciones + respuesta por pregunta
+    detalle:   `INFRACCIONES: ${infrTxt} || RESPUESTAS: ${detalleResp.join(' | ')}`,
+    // Campo "observaciones" → preguntas falladas
+    obs:       `Falladas: ${falladas}`
+  });
+
+  const st = document.getElementById('send-status');
+  if (ok) {
+    st.className  = 'send-status ok';
+    st.textContent = '✓ Resultado registrado en el concentrado del docente.';
+    btn.textContent = '✓ Registrado';
+  } else {
+    st.className  = 'send-status fail';
+    st.textContent = '⚠ Sin conexión. Muestra el resultado al docente para registro manual.';
+    btn.disabled = false;
+    btn.textContent = '📤 Reintentar';
+  }
+
+  // Mostrar pestaña resultado
+  document.getElementById('tab-btn-resultado').style.display = 'block';
+  showTab('resultado', document.getElementById('tab-btn-resultado'));
+}
+
+/* ══ TABS ════════════════════════════════════════════════ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: btn.closest('.tabs').offsetTop - 70, behavior:'smooth' });
+}
+
+/* ══ TEMPORIZADOR ════════════════════════════════════════ */
+let secs = 60 * 60;
+const tEl = document.getElementById('timer');
+const iv  = setInterval(() => {
+  secs--;
+  const m = String(Math.floor(secs/60)).padStart(2,'0');
+  const s = String(secs%60).padStart(2,'0');
+  tEl.textContent = `⏱ ${m}:${s}`;
+  if (secs <= 600 && secs > 300) tEl.className = 'warn';
+  if (secs <= 300)               tEl.className = 'danger';
+  if (secs <= 0) clearInterval(iv);
+}, 1000);
+
+/* ══ TEMA ════════════════════════════════════════════════ */
+function toggleTheme() {
+  const h     = document.documentElement;
+  const dark  = h.getAttribute('data-theme') === 'dark';
+  h.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('theme-toggle').textContent = dark ? '☀️' : '🌙';
+  try { localStorage.setItem('ev-theme', dark ? 'light' : 'dark'); } catch(e){}
+}
+(function(){
+  try {
+    const t = localStorage.getItem('ev-theme');
+    if (t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('theme-toggle').textContent = t==='dark' ? '☀️' : '🌙';
+    }
+  } catch(e){}
+})();
+
+/* ══ FECHA Y MARCA DE AGUA ═══════════════════════════════ */
+const fecha = new Date().toLocaleDateString('es-MX', {day:'2-digit',month:'long',year:'numeric'});
+document.getElementById('fecha-hoy').textContent    = fecha;
+document.getElementById('fecha-footer').textContent = fecha;
+document.getElementById('ff').value = new Date().toISOString().split('T')[0];
+
+(function(){
+  const w = document.getElementById('wmInner');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('span');
+    s.className   = 'wm-text';
+    s.textContent = 'CULTURA DIGITAL II';
+    w.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
