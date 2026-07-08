@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Final — Cultura Digital II · Recursamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+
+/* ══ SECCIÓN BANNERS ════════════════════════════════════ */
+.sec-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border); border-top: 3px solid var(--accent);
+  border-radius: var(--radius); padding: 16px 22px; margin: 28px 0 18px;
+}
+.sec-banner.teal  { border-top-color: var(--cyan);   }
+.sec-banner.green { border-top-color: var(--green);  }
+.sec-banner.gold  { border-top-color: var(--yellow); }
+.sb-icon  { font-size: 26px; flex-shrink: 0; }
+.sb-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+.sec-banner.teal  .sb-label { color: var(--cyan);   }
+.sec-banner.green .sb-label { color: var(--green);  }
+.sec-banner.gold  .sb-label { color: var(--yellow); }
+.sb-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.sb-sub   { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.sb-pts   {
+  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent); background: var(--accent-glow);
+  border: 1px solid var(--accent); border-radius: var(--radius-sm);
+  padding: 5px 14px; white-space: nowrap;
+}
+.sec-banner.teal  .sb-pts { color:var(--cyan);   background:var(--cyan-bg);   border-color:var(--cyan);   }
+.sec-banner.green .sb-pts { color:var(--green);  background:var(--green-bg);  border-color:var(--green);  }
+.sec-banner.gold  .sb-pts { color:var(--yellow); background:var(--yellow-bg); border-color:var(--yellow); }
+
+/* ══ SECCIÓN A — OPCIÓN MÚLTIPLE ════════════════════════ */
+/* Usa estilos de base.css */
+
+/* ══ SECCIÓN B — COMPLETAR FRASES ══════════════════════ */
+.fill-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 12px;
+}
+.fill-num  { font-family: var(--font-mono); font-size: 9px; color: var(--cyan); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.fill-text { font-size: 14px; color: var(--text); line-height: 1.9; }
+.fill-blank {
+  display: inline-block; min-width: 140px; border: none;
+  border-bottom: 2px solid var(--cyan); background: transparent;
+  color: var(--cyan); font-family: var(--font-mono); font-size: 13px;
+  font-weight: 600; padding: 2px 8px; margin: 0 4px;
+  outline: none; transition: border-color var(--transition), background var(--transition);
+  text-align: center;
+}
+.fill-blank:focus { border-bottom-color: var(--accent); background: var(--accent-glow); border-radius: 3px 3px 0 0; }
+.fill-blank.ok   { border-bottom-color: var(--green);  color: var(--green);  }
+.fill-blank.fail { border-bottom-color: var(--red);    color: var(--red);    }
+.fill-hint {
+  font-size: 11px; color: var(--text2); font-style: italic;
+  margin-top: 6px; font-family: var(--font-mono);
+}
+.wordbank {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px; margin-bottom: 18px;
+}
+.wb-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 10px; font-weight: 600; }
+.wb-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.wb-chip {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 99px;
+  background: var(--bg2); border: 1px solid var(--border2); color: var(--text2);
+  user-select: none; transition: opacity .2s;
+}
+.wb-chip.used { opacity: .3; text-decoration: line-through; }
+
+/* ══ SECCIÓN C — MEMORIA ════════════════════════════════ */
+.memory-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 16px;
+}
+.mem-card {
+  background: var(--bg2); border: 2px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0;
+  aspect-ratio: 1 / 1; cursor: pointer; position: relative;
+  overflow: hidden; transition: transform .15s, border-color .2s;
+  user-select: none;
+}
+.mem-card:hover:not(.flipped):not(.matched) { transform: scale(1.04); border-color: var(--border2); }
+.mem-card.flipped  { border-color: var(--accent); }
+.mem-card.matched  { border-color: var(--green); cursor: default; }
+.mem-card.wrong    { border-color: var(--red); animation: shake .35s; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-5px); }
+  75%      { transform: translateX(5px); }
+}
+
+.mem-front, .mem-back {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 8px; text-align: center;
+  transition: opacity .3s;
+}
+.mem-front {
+  background: var(--bg3);
+  font-family: var(--font-mono); font-size: 22px;
+  color: var(--accent);
+}
+.mem-back {
+  background: var(--bg2); opacity: 0;
+  font-size: 11px; color: var(--text); line-height: 1.4; font-weight: 600;
+}
+.mem-card.flipped .mem-front, .mem-card.matched .mem-front { opacity: 0; }
+.mem-card.flipped .mem-back,  .mem-card.matched .mem-back  { opacity: 1; }
+.mem-card.matched .mem-back { background: var(--green-bg); color: var(--green); }
+
+.mem-stats {
+  display: flex; gap: 12px; margin-bottom: 12px;
+}
+.mem-stat {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 16px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text2);
+}
+.mem-stat span { font-size: 18px; font-weight: 700; color: var(--accent); display: block; }
+
+.mem-result {
+  display: none; background: var(--green-bg); border: 1px solid var(--green);
+  border-radius: var(--radius); padding: 14px 18px; margin-top: 10px;
+  font-size: 13px; color: var(--green); text-align: center; font-weight: 600;
+}
+
+/* ══ SECCIÓN D — ARRASTRAR CONCEPTOS ═══════════════════ */
+.drag-layout {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 14px;
+}
+.drag-terms {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.drag-term {
+  background: var(--bg2); border: 2px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  cursor: grab; transition: border-color .2s, transform .15s, opacity .2s;
+  user-select: none;
+}
+.drag-term:hover         { border-color: var(--accent); transform: translateX(3px); }
+.drag-term.dragging      { opacity: .4; cursor: grabbing; }
+.drag-term.placed        { opacity: .35; cursor: default; pointer-events: none; }
+
+.drag-defs { display: flex; flex-direction: column; gap: 8px; }
+.drag-def-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px; min-height: 54px;
+}
+.drag-drop-zone {
+  min-width: 130px; min-height: 34px;
+  border: 2px dashed var(--border2); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text2);
+  padding: 4px 8px; transition: border-color .2s, background .2s;
+  flex-shrink: 0;
+}
+.drag-drop-zone.over    { border-color: var(--accent); background: var(--accent-glow); }
+.drag-drop-zone.ok      { border-color: var(--green);  background: var(--green-bg);  border-style: solid; }
+.drag-drop-zone.fail    { border-color: var(--red);    background: var(--red-bg);    border-style: solid; }
+.drag-drop-zone.filled  { border-style: solid; border-color: var(--border2); }
+.drag-term-placed {
+  font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.drag-def-text { font-size: 12.5px; color: var(--text2); line-height: 1.45; flex: 1; }
+
+/* Touch support visual */
+.drag-term.touch-selected { border-color: var(--accent); background: var(--accent-glow); transform: scale(1.03); }
+
+/* ══ RESULTADO FINAL ════════════════════════════════════ */
+.score-big {
+  font-family: var(--font-mono); font-size: clamp(3rem,8vw,5rem);
+  font-weight: 800; color: var(--accent); line-height: 1;
+  display: block; text-align: center; margin: 10px 0 4px;
+}
+.section-scores {
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin: 18px 0;
+}
+.ss-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 16px;
+}
+.ss-name  { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+.ss-val   { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--accent); }
+.ss-bar   { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.ss-fill  { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 99px; transition: width 1s .3s; }
+
+.farewell {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 32px; margin-top: 24px; text-align: center;
+}
+.farewell-quote {
+  font-size: 16px; font-style: italic; color: var(--text);
+  line-height: 1.8; margin-bottom: 10px; position: relative;
+}
+.farewell-quote::before {
+  content: '"'; position: absolute; top: -20px; left: -10px;
+  font-size: 70px; color: var(--accent); opacity: .15;
+  font-family: Georgia,serif; line-height: 1; pointer-events: none;
+}
+.farewell-author { font-family: var(--font-mono); font-size: 11px; color: var(--text2); margin-bottom: 18px; }
+.farewell-msg    { font-size: 13.5px; color: var(--text2); line-height: 1.75; max-width: 540px; margin: 0 auto; }
+.farewell-msg strong { color: var(--text); }
+
+/* Envío */
+.send-status {
+  display: none; margin-top: 12px; padding: 10px 16px;
+  border-radius: var(--radius-sm); font-size: 12px;
+  font-family: var(--font-mono); text-align: center;
+}
+.send-status.ok   { background: var(--green-bg);  border: 1px solid var(--green);  color: var(--green);  display: block; }
+.send-status.fail { background: var(--yellow-bg); border: 1px solid var(--yellow); color: var(--yellow); display: block; }
+
+@media (max-width: 640px) {
+  .memory-grid   { grid-template-columns: repeat(3,1fr); }
+  .drag-layout   { grid-template-columns: 1fr; }
+  .section-scores{ grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wm" aria-hidden="true"><div class="wm-inner" id="wmInner"></div></div>
+
+<!-- OVERLAY -->
+<div id="alert-overlay">
+  <div class="alert-box">
+    <div class="alert-icon" id="alert-icon">⚠️</div>
+    <h3 id="alert-title">Actividad detectada</h3>
+    <p id="alert-msg">Se registró una acción no permitida.</p>
+    <button class="btn btn-primary" onclick="closeAlert()">Entendido — continuar</button>
+  </div>
+</div>
+
+<!-- BARRA SUPERIOR -->
+<nav id="topbar">
+  <div class="tb-left">
+    <span class="tb-materia">💻 Cultura Digital II</span>
+    <span class="tb-semestre">Recursamiento · Sesión 4 · Evaluación Final</span>
+    <span id="infraction-badge">⚠ infracciones: <span id="infr-count">0</span></span>
+  </div>
+  <div class="tb-right">
+    <div id="timer">⏱ 50:00</div>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- CABECERA -->
+  <header class="eval-header">
+    <div class="eval-tag">🎓 Evaluación Final · Sesión 4</div>
+    <h1>Cultura Digital II<br>Recursamiento</h1>
+    <p class="eval-sub">Evaluación integral · Cuatro tipos de actividades · 100 puntos</p>
+    <div class="eval-meta">
+      <span>⏱ 50 minutos</span>
+      <span>📋 4 secciones</span>
+      <span>🎯 100 puntos</span>
+      <span>📅 <span id="fecha-hoy"></span></span>
+    </div>
+  </header>
+
+  <!-- DATOS DEL ALUMNO -->
+  <section class="student-card">
+    <div class="sc-title">👤 Identificación</div>
+    <div class="sc-grid">
+      <div class="sc-field">
+        <label for="fn">Nombre completo</label>
+        <input type="text" id="fn" placeholder="Apellidos, Nombre(s)" autocomplete="off">
+      </div>
+      <div class="sc-field">
+        <label for="fg">Grupo</label>
+        <input type="text" id="fg" placeholder="Ej. 2°B" autocomplete="off">
+      </div>
+      <div class="sc-field">
+        <label for="fm">Materia</label>
+        <input type="text" id="fm" value="Cultura Digital II">
+      </div>
+      <div class="sc-field">
+        <label for="ff">Fecha</label>
+        <input type="date" id="ff">
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCCIONES -->
+  <div class="context-box" style="border-left-color:var(--cyan);margin-bottom:28px;">
+    <div class="ctx-title" style="color:var(--cyan);">📌 Instrucciones generales</div>
+    <div class="instr-list">
+      <div class="instr-item"><span class="ii-num" style="background:var(--cyan);border-color:var(--cyan);">1</span><span>Esta evaluación tiene <strong>cuatro secciones</strong>. Completa todas antes de calificar.</span></div>
+      <div class="instr-item"><span class="ii-num" style="background:var(--cyan);border-color:var(--cyan);">2</span><span>La <strong>sección A</strong> (opción múltiple) y la <strong>sección B</strong> (completar frases) son individuales y calificadas automáticamente.</span></div>
+      <div class="instr-item"><span class="ii-num" style="background:var(--cyan);border-color:var(--cyan);">3</span><span>La <strong>sección C</strong> (memoria) es un juego de pares — tu puntuación depende de cuántos intentos uses.</span></div>
+      <div class="instr-item"><span class="ii-num" style="background:var(--cyan);border-color:var(--cyan);">4</span><span>La <strong>sección D</strong> (arrastrar) une conceptos con definiciones. Arrastra o toca y selecciona.</span></div>
+      <div class="instr-item"><span class="ii-num" style="background:var(--cyan);border-color:var(--cyan);">5</span><span>Tienes <strong>50 minutos</strong>. Los cambios de pantalla y copias quedan registrados y aparecen en tu reporte.</span></div>
+    </div>
+  </div>
+
+  <!-- PROGRESO GLOBAL -->
+  <div class="progress-wrap">
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span class="progress-label" id="progress-label">0 / 4 secciones completadas</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECCIÓN A — OPCIÓN MÚLTIPLE
+  ══════════════════════════════════════════════════ -->
+  <div class="sec-banner">
+    <span class="sb-icon">🧠</span>
+    <div>
+      <div class="sb-label">Sección A</div>
+      <div class="sb-title">Opción múltiple — Conceptos y escenarios</div>
+      <div class="sb-sub">Selecciona la única respuesta correcta para cada reactivo.</div>
+    </div>
+    <div class="sb-pts">6 reactivos · 30 pts</div>
+  </div>
+
+  <!-- A1 -->
+  <div class="question-card" id="qcA1">
+    <div class="q-number">A1 · Opción múltiple</div>
+    <p class="q-text">¿Cuál de las siguientes herramientas garantiza <strong>cifrado de extremo a extremo</strong> en documentos colaborativos?</p>
+    <div class="options">
+      <label class="option"><input type="radio" name="A1" value="a" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Google Docs</span></label>
+      <label class="option"><input type="radio" name="A1" value="b" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Microsoft Word Online</span></label>
+      <label class="option"><input type="radio" name="A1" value="c" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">CryptPad</span></label>
+      <label class="option"><input type="radio" name="A1" value="d" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Canva</span></label>
+    </div>
+  </div>
+
+  <!-- A2 -->
+  <div class="question-card" id="qcA2">
+    <div class="q-number">A2 · Opción múltiple</div>
+    <p class="q-text">Valeria encuentra un artículo sin autor, sin fecha y en un dominio <code style="font-family:var(--font-mono);background:var(--bg3);padding:1px 5px;border-radius:3px;">.blogspot.com</code>. Aplicando criterios de investigación digital, ¿qué debe hacer?</p>
+    <div class="options">
+      <label class="option"><input type="radio" name="A2" value="a" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Usarlo porque tiene mucha información.</span></label>
+      <label class="option"><input type="radio" name="A2" value="b" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Verificar el dato en fuentes institucionales antes de usarlo.</span></label>
+      <label class="option"><input type="radio" name="A2" value="c" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Compartirlo para que otros lo verifiquen.</span></label>
+      <label class="option"><input type="radio" name="A2" value="d" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Descartarlo sin verificar porque ningún blog es confiable.</span></label>
+    </div>
+  </div>
+
+  <!-- A3 -->
+  <div class="question-card" id="qcA3">
+    <div class="q-number">A3 · Opción múltiple</div>
+    <p class="q-text">Un conjunto de datos tiene los valores <code style="font-family:var(--font-mono);background:var(--bg3);padding:1px 5px;border-radius:3px;">6, 8, 8, 10, 12, 8, 4</code>. ¿Cuál es la <strong>moda</strong>?</p>
+    <div class="options">
+      <label class="option"><input type="radio" name="A3" value="a" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">8 — porque se repite tres veces</span></label>
+      <label class="option"><input type="radio" name="A3" value="b" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">8 — porque es el valor del centro</span></label>
+      <label class="option"><input type="radio" name="A3" value="c" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">8 — porque es el promedio de todos los valores</span></label>
+      <label class="option"><input type="radio" name="A3" value="d" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">12 — porque es el valor más alto</span></label>
+    </div>
+  </div>
+
+  <!-- A4 -->
+  <div class="question-card" id="qcA4">
+    <div class="q-number">A4 · Opción múltiple</div>
+    <p class="q-text">¿Qué tipo de gráfica usarías para mostrar qué <strong>porcentaje</strong> del total de especies en peligro pertenece a cada tipo (mamífero, reptil, ave, pez)?</p>
+    <div class="options">
+      <label class="option"><input type="radio" name="A4" value="a" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">Gráfica de líneas</span></label>
+      <label class="option"><input type="radio" name="A4" value="b" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">Histograma</span></label>
+      <label class="option"><input type="radio" name="A4" value="c" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Gráfica de pastel</span></label>
+      <label class="option"><input type="radio" name="A4" value="d" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">Diagrama de flujo</span></label>
+    </div>
+  </div>
+
+  <!-- A5 -->
+  <div class="question-card" id="qcA5">
+    <div class="q-number">A5 · Opción múltiple</div>
+    <p class="q-text">La <strong>soberanía digital</strong> se diferencia de la simple "privacidad" en que:</p>
+    <div class="options">
+      <label class="option"><input type="radio" name="A5" value="a" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">La soberanía digital solo aplica a gobiernos, no a personas.</span></label>
+      <label class="option"><input type="radio" name="A5" value="b" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">La soberanía digital implica también controlar qué tecnología usamos y no depender de plataformas externas, más allá de proteger datos.</span></label>
+      <label class="option"><input type="radio" name="A5" value="c" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">Son exactamente lo mismo — ambos términos significan que nadie puede ver tus datos.</span></label>
+      <label class="option"><input type="radio" name="A5" value="d" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">La privacidad es más importante que la soberanía digital porque protege más información.</span></label>
+    </div>
+  </div>
+
+  <!-- A6 -->
+  <div class="question-card" id="qcA6">
+    <div class="q-number">A6 · Opción múltiple</div>
+    <p class="q-text">En una hoja de cálculo colaborativa, el equipo registró niveles de riesgo: 5, 3, 4, 5, 2. ¿Qué fórmula calcula el <strong>rango</strong>?</p>
+    <div class="options">
+      <label class="option"><input type="radio" name="A6" value="a" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">A</span><span class="opt-text">=PROMEDIO(B2:B6)</span></label>
+      <label class="option"><input type="radio" name="A6" value="b" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">B</span><span class="opt-text">=SUMA(B2:B6)</span></label>
+      <label class="option"><input type="radio" name="A6" value="c" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">C</span><span class="opt-text">=MAX(B2:B6)-MIN(B2:B6)</span></label>
+      <label class="option"><input type="radio" name="A6" value="d" onchange="updateGlobalProgress()"><span class="opt-dot"></span><span class="opt-letter">D</span><span class="opt-text">=MODA(B2:B6)</span></label>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECCIÓN B — COMPLETAR FRASES
+  ══════════════════════════════════════════════════ -->
+  <div class="sec-banner teal">
+    <span class="sb-icon">✍️</span>
+    <div>
+      <div class="sb-label">Sección B</div>
+      <div class="sb-title">Completar frases</div>
+      <div class="sb-sub">Escribe la palabra correcta en cada espacio. Usa el banco de palabras como guía.</div>
+    </div>
+    <div class="sb-pts">6 frases · 30 pts</div>
+  </div>
+
+  <!-- Banco de palabras -->
+  <div class="wordbank">
+    <div class="wb-label">🗂 Banco de palabras — úsalas para completar las frases</div>
+    <div class="wb-chips" id="wordbank-chips">
+      <span class="wb-chip">mediana</span>
+      <span class="wb-chip">software libre</span>
+      <span class="wb-chip">cifrado</span>
+      <span class="wb-chip">rango</span>
+      <span class="wb-chip">soberanía digital</span>
+      <span class="wb-chip">moda</span>
+      <span class="wb-chip">confiabilidad</span>
+      <span class="wb-chip">colaborativo</span>
+      <span class="wb-chip">media</span>
+      <span class="wb-chip">histograma</span>
+    </div>
+  </div>
+
+  <!-- Frases -->
+  <div class="fill-card">
+    <div class="fill-num">Frase B1</div>
+    <div class="fill-text">
+      La capacidad de decidir qué tecnología usamos y no depender de plataformas privadas se llama
+      <input class="fill-blank" id="b1" data-answer="soberanía digital" placeholder="____________" autocomplete="off" spellcheck="false">.
+    </div>
+    <div class="fill-hint">Pista: tiene que ver con control propio sobre lo tecnológico</div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-num">Frase B2</div>
+    <div class="fill-text">
+      CryptPad protege los documentos mediante
+      <input class="fill-blank" id="b2" data-answer="cifrado" placeholder="____________" autocomplete="off" spellcheck="false">
+      de extremo a extremo, lo que impide que incluso el servidor pueda leer el contenido.
+    </div>
+    <div class="fill-hint">Pista: proceso que convierte datos en código ilegible sin llave</div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-num">Frase B3</div>
+    <div class="fill-text">
+      En un conjunto de datos, la
+      <input class="fill-blank" id="b3" data-answer="moda" placeholder="____________" autocomplete="off" spellcheck="false">
+      es el único tipo de medida de tendencia central que también puede aplicarse a datos cualitativos como nombres o colores.
+    </div>
+    <div class="fill-hint">Pista: es el valor que más se repite</div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-num">Frase B4</div>
+    <div class="fill-text">
+      Cuando hay valores extremos que distorsionan el promedio, conviene usar la
+      <input class="fill-blank" id="b4" data-answer="mediana" placeholder="____________" autocomplete="off" spellcheck="false">
+      porque no se ve afectada por esos datos atípicos.
+    </div>
+    <div class="fill-hint">Pista: es el valor que queda en el centro al ordenar los datos</div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-num">Frase B5</div>
+    <div class="fill-text">
+      Para evaluar si una fuente digital es confiable debemos revisar su autoría, institución, fecha, propósito y hacer verificación cruzada; estos criterios en conjunto determinan su
+      <input class="fill-blank" id="b5" data-answer="confiabilidad" placeholder="____________" autocomplete="off" spellcheck="false">.
+    </div>
+    <div class="fill-hint">Pista: cualidad de una fuente que permite confiar en ella</div>
+  </div>
+
+  <div class="fill-card">
+    <div class="fill-num">Frase B6</div>
+    <div class="fill-text">
+      El
+      <input class="fill-blank" id="b6" data-answer="rango" placeholder="____________" autocomplete="off" spellcheck="false">
+      no es una medida de tendencia central, sino de dispersión; se obtiene restando el valor mínimo al valor máximo del conjunto de datos.
+    </div>
+    <div class="fill-hint">Pista: mide qué tan separados están los extremos</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECCIÓN C — MEMORIA
+  ══════════════════════════════════════════════════ -->
+  <div class="sec-banner green">
+    <span class="sb-icon">🧩</span>
+    <div>
+      <div class="sb-label">Sección C</div>
+      <div class="sb-title">Juego de memoria — encuentra los pares</div>
+      <div class="sb-sub">Cada concepto tiene su par. Menos intentos = mejor puntuación.</div>
+    </div>
+    <div class="sb-pts">8 pares · 20 pts</div>
+  </div>
+
+  <div class="mem-stats">
+    <div class="mem-stat">Intentos: <span id="mem-intentos">0</span></div>
+    <div class="mem-stat">Pares encontrados: <span id="mem-pares">0</span></div>
+    <div class="mem-stat">Puntos estimados: <span id="mem-pts">20</span></div>
+  </div>
+
+  <div class="memory-grid" id="mem-grid"></div>
+  <div class="mem-result" id="mem-result">🎉 ¡Completaste el juego de memoria! Puntaje registrado.</div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECCIÓN D — ARRASTRAR CONCEPTOS
+  ══════════════════════════════════════════════════ -->
+  <div class="sec-banner gold">
+    <span class="sb-icon">🔗</span>
+    <div>
+      <div class="sb-label">Sección D</div>
+      <div class="sb-title">Une conceptos con su definición</div>
+      <div class="sb-sub">Arrastra cada concepto de la izquierda hacia la definición correcta. En móvil: toca el concepto y luego la definición.</div>
+    </div>
+    <div class="sb-pts">8 pares · 20 pts</div>
+  </div>
+
+  <div class="drag-layout">
+    <div class="drag-terms" id="drag-terms"></div>
+    <div class="drag-defs"  id="drag-defs"></div>
+  </div>
+
+  <!-- ══ BOTÓN CALIFICAR ══════════════════════════════ -->
+  <div class="submit-wrap" style="margin-top:36px;">
+    <button class="btn btn-primary btn-block" id="btn-submit" onclick="calificarTodo()">
+      🎓 Calificar evaluación final y registrar resultado
+    </button>
+    <p class="submit-note">Completa las cuatro secciones antes de calificar. El resultado se enviará automáticamente al docente.</p>
+  </div>
+
+  <div class="send-status" id="send-status"></div>
+
+  <!-- ══ PANEL DE RESULTADO ════════════════════════════ -->
+  <section id="result-panel" style="display:none;margin-top:32px;">
+
+    <div style="text-align:center;padding:28px 0 16px;">
+      <h2 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:4px;">Resultado Final — Cultura Digital II</h2>
+      <span class="score-big" id="res-score">—</span>
+      <p id="res-pct" style="font-size:14px;color:var(--text2);"></p>
+      <div class="result-rank" id="res-rank" style="margin:12px auto;"></div>
+      <p id="res-name" style="font-size:17px;font-weight:700;color:var(--text);margin-top:10px;"></p>
+      <p id="res-meta" style="font-size:13px;color:var(--text2);margin-top:4px;"></p>
+    </div>
+
+    <!-- Puntaje por sección -->
+    <div class="section-scores">
+      <div class="ss-card">
+        <div class="ss-name">A — Opción múltiple</div>
+        <div class="ss-val" id="sc-A">0/30</div>
+        <div class="ss-bar"><div class="ss-fill" id="sf-A" style="width:0%"></div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-name">B — Completar frases</div>
+        <div class="ss-val" id="sc-B">0/30</div>
+        <div class="ss-bar"><div class="ss-fill" id="sf-B" style="width:0%"></div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-name">C — Memoria</div>
+        <div class="ss-val" id="sc-C">0/20</div>
+        <div class="ss-bar"><div class="ss-fill" id="sf-C" style="width:0%"></div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-name">D — Arrastrar conceptos</div>
+        <div class="ss-val" id="sc-D">0/20</div>
+        <div class="ss-bar"><div class="ss-fill" id="sf-D" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Desglose opción múltiple -->
+    <div class="breakdown" style="margin-top:20px;">
+      <h3>Detalle sección A — Opción múltiple</h3>
+      <div id="bd-rows"></div>
+    </div>
+
+    <!-- Infracciones -->
+    <div id="infraction-block" style="margin-top:18px;"></div>
+
+    <!-- Despedida y reflexión -->
+    <div class="farewell" id="farewell-block">
+      <p class="farewell-quote" id="farewell-quote"></p>
+      <p class="farewell-author" id="farewell-author"></p>
+      <p class="farewell-msg" id="farewell-msg"></p>
+    </div>
+
+    <div class="submit-wrap" style="margin-top:24px;">
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir resultado</button>
+    </div>
+
+  </section>
+
+</div><!-- /container -->
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   DATOS Y CLAVES
+══════════════════════════════════════════════════════════ */
+
+// SECCIÓN A — opción múltiple
+const A_ANSWERS = { A1:'c', A2:'b', A3:'a', A4:'c', A5:'b', A6:'c' };
+const A_LABELS  = {
+  A1:'Herramienta con cifrado extremo a extremo',
+  A2:'Artículo sin autor, fecha ni institución',
+  A3:'Moda del conjunto 6,8,8,10,12,8,4',
+  A4:'Gráfica para porcentajes de un todo',
+  A5:'Soberanía digital vs privacidad',
+  A6:'Fórmula para calcular el rango'
+};
+const A_OPTS = {
+  A1:{ a:'Google Docs', b:'Microsoft Word Online', c:'CryptPad', d:'Canva' },
+  A2:{ a:'Usarlo porque tiene info', b:'Verificar en fuentes institucionales', c:'Compartirlo para que otros lo verifiquen', d:'Descartarlo sin verificar' },
+  A3:{ a:'8 — más repetido', b:'8 — centro', c:'8 — promedio', d:'12 — más alto' },
+  A4:{ a:'Líneas', b:'Histograma', c:'Pastel', d:'Diagrama de flujo' },
+  A5:{ a:'Solo aplica a gobiernos', b:'Implica también controlar qué tecnología usamos', c:'Son lo mismo', d:'Privacidad es más importante' },
+  A6:{ a:'=PROMEDIO()', b:'=SUMA()', c:'=MAX()-MIN()', d:'=MODA()' }
+};
+
+// SECCIÓN B — completar (respuestas aceptadas en minúsculas, sin tilde)
+const B_ANSWERS = {
+  b1: ['soberanía digital','soberania digital'],
+  b2: ['cifrado'],
+  b3: ['moda'],
+  b4: ['mediana'],
+  b5: ['confiabilidad'],
+  b6: ['rango']
+};
+
+// SECCIÓN C — pares de memoria
+const MEM_PAIRS = [
+  { emoji:'🔓', text:'Software libre',       match:'Permite ver, modificar y redistribuir su código fuente' },
+  { emoji:'🔐', text:'Cifrado E2E',          match:'Ni el servidor puede leer el contenido del documento' },
+  { emoji:'🌐', text:'Soberanía digital',    match:'Control sobre qué tecnología usamos y nuestros datos' },
+  { emoji:'📐', text:'Media aritmética',     match:'Suma de valores dividida entre la cantidad de datos' },
+  { emoji:'📍', text:'Mediana',              match:'Valor central al ordenar datos de menor a mayor' },
+  { emoji:'🔁', text:'Moda',                 match:'Valor que más se repite en el conjunto' },
+  { emoji:'📏', text:'Rango',                match:'Diferencia entre el valor máximo y el mínimo' },
+  { emoji:'🔍', text:'Verificación cruzada', match:'Comparar un dato en tres o más fuentes distintas' }
+];
+
+// SECCIÓN D — arrastrar
+const DRAG_PAIRS = [
+  { term:'CryptPad',          def:'Herramienta colaborativa de software libre con cifrado de extremo a extremo.' },
+  { term:'Histograma',        def:'Gráfica de barras continuas que muestra la distribución de frecuencias.' },
+  { term:'Etherpad',          def:'Editor de texto colaborativo de código abierto sin necesidad de cuenta.' },
+  { term:'Fuente primaria',   def:'Información de primera mano: reportes oficiales, artículos científicos originales.' },
+  { term:'Gráfica de líneas', def:'Muestra la evolución de un valor a lo largo del tiempo.' },
+  { term:'Investigación digital','def':'Proceso de buscar, evaluar, comparar y organizar información de varias fuentes.' },
+  { term:'Trabajo colaborativo','def':'Todos los integrantes participan activamente en la misma herramienta.' },
+  { term:'Riseup Pad',        def:'Editor colaborativo en tiempo real enfocado en privacidad y sin registro.' }
+];
+
+/* ══ GOOGLE FORMS ══════════════════════════════════════ */
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe_3R6ofopEe1KFri8r7QBTCfYSLUruo8PXUSg57yYh0gxkoQ/formResponse';
+const F = {
+  nombre:'entry.1239243431', grupo:'entry.2004441838', materia:'entry.452762832',
+  sesion:'entry.1347797892', cal:'entry.1812449136',   correctas:'entry.1660403267',
+  infr:'entry.1865236519',   detalle:'entry.1713710783', obs:'entry.319383385'
+};
+async function enviarASheets(d) {
+  const body = new FormData();
+  Object.entries(F).forEach(([k,e]) => body.append(e, d[k] ?? ''));
+  try { await fetch(FORM_URL,{ method:'POST', body, mode:'no-cors' }); return true; }
+  catch { return false; }
+}
+
+/* ══ INFRACCIONES ══════════════════════════════════════ */
+let infractions=[], tabSW=0, copyAt=0;
+const fmtTs = () => new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function registerInfraction(tipo,msg){
+  const t=fmtTs(); infractions.push({t,tipo,msg});
+  document.getElementById('infr-count').textContent=infractions.length;
+  document.getElementById('infraction-badge').classList.add('visible');
+  document.getElementById('alert-icon').textContent=tipo==='tab'?'👁️':'📋';
+  document.getElementById('alert-title').textContent=tipo==='tab'?'Cambio de ventana':'Copia detectada';
+  document.getElementById('alert-msg').textContent=`${msg} — ${t}`;
+  document.getElementById('alert-overlay').classList.add('show');
+}
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ tabSW++; registerInfraction('tab',`Cambio #${tabSW}`); } });
+document.addEventListener('copy', e=>{ e.preventDefault(); copyAt++; registerInfraction('copy',`Copia #${copyAt}`); });
+document.addEventListener('paste',e=>e.preventDefault());
+document.addEventListener('cut',  e=>e.preventDefault());
+document.addEventListener('contextmenu',e=>e.preventDefault());
+function closeAlert(){ document.getElementById('alert-overlay').classList.remove('show'); }
+
+/* ══ PROGRESO GLOBAL ═══════════════════════════════════ */
+let secCompleted = { A:false, B:false, C:false, D:false };
+function updateGlobalProgress(){
+  // A: al menos 1 radio seleccionado por pregunta (simplificado: si hay 6 seleccionados)
+  let aOk = Object.keys(A_ANSWERS).every(k => !!document.querySelector(`input[name="${k}"]:checked`));
+  secCompleted.A = aOk;
+  const done = Object.values(secCompleted).filter(Boolean).length;
+  document.getElementById('progress-fill').style.width = (done/4*100)+'%';
+  document.getElementById('progress-label').textContent = `${done} / 4 secciones completadas`;
+}
+
+/* ══ SECCIÓN C — MEMORIA ═══════════════════════════════ */
+let memIntents=0, memPares=0, memFlipped=[], memLocked=false, memScore=20;
+
+(function buildMemory(){
+  const grid   = document.getElementById('mem-grid');
+  const cards  = [];
+  MEM_PAIRS.forEach((p,i) => {
+    cards.push({ id:`e${i}`, type:'emoji', group:i, front:p.emoji,    back:p.text   });
+    cards.push({ id:`t${i}`, type:'text',  group:i, front:'🃏',        back:p.match  });
+  });
+  // shuffle
+  for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}
+  cards.forEach(c=>{
+    const el=document.createElement('div');
+    el.className='mem-card'; el.dataset.id=c.id; el.dataset.group=c.group;
+    el.innerHTML=`<div class="mem-front">${c.front}</div><div class="mem-back">${c.back}</div>`;
+    el.addEventListener('click',()=>flipCard(el));
+    grid.appendChild(el);
+  });
+})();
+
+function flipCard(el){
+  if(memLocked||el.classList.contains('flipped')||el.classList.contains('matched')) return;
+  el.classList.add('flipped');
+  memFlipped.push(el);
+  if(memFlipped.length===2){
+    memLocked=true; memIntents++;
+    document.getElementById('mem-intentos').textContent=memIntents;
+    const [a,b]=memFlipped;
+    if(a.dataset.group===b.dataset.group){
+      // par correcto
+      setTimeout(()=>{
+        a.classList.add('matched'); b.classList.add('matched');
+        memPares++;
+        document.getElementById('mem-pares').textContent=memPares;
+        // penalizar puntos: >8 intentos reduce puntaje
+        memScore = Math.max(10, 20 - Math.max(0, memIntents-8)*1);
+        document.getElementById('mem-pts').textContent=memScore;
+        memFlipped=[]; memLocked=false;
+        if(memPares===MEM_PAIRS.length){
+          document.getElementById('mem-result').style.display='block';
+          secCompleted.C=true; updateGlobalProgress();
+        }
+      },400);
+    } else {
+      // par incorrecto
+      a.classList.add('wrong'); b.classList.add('wrong');
+      setTimeout(()=>{
+        a.classList.remove('flipped','wrong'); b.classList.remove('flipped','wrong');
+        memFlipped=[]; memLocked=false;
+      },800);
+    }
+  }
+}
+
+/* ══ SECCIÓN D — ARRASTRAR ═════════════════════════════ */
+let dragSel=null; // para táctil
+const dragState={}; // defIndex → termIndex colocado
+
+(function buildDrag(){
+  // shuffle terms
+  const terms=[...DRAG_PAIRS.map((_,i)=>i)];
+  for(let i=terms.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[terms[i],terms[j]]=[terms[j],terms[i]];}
+  // shuffle defs
+  const defs=[...DRAG_PAIRS.map((_,i)=>i)];
+  for(let i=defs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[defs[i],defs[j]]=[defs[j],defs[i]];}
+
+  const termsEl=document.getElementById('drag-terms');
+  const defsEl =document.getElementById('drag-defs');
+
+  terms.forEach(ti=>{
+    const el=document.createElement('div');
+    el.className='drag-term'; el.textContent=DRAG_PAIRS[ti].term;
+    el.dataset.ti=ti;
+    // Desktop drag
+    el.draggable=true;
+    el.addEventListener('dragstart',e=>{ e.dataTransfer.setData('ti',ti); el.classList.add('dragging'); });
+    el.addEventListener('dragend',  ()=>el.classList.remove('dragging'));
+    // Touch
+    el.addEventListener('click',()=>handleTermClick(el,ti));
+    termsEl.appendChild(el);
+  });
+
+  defs.forEach((di,idx)=>{
+    const row=document.createElement('div'); row.className='drag-def-row';
+    const zone=document.createElement('div');
+    zone.className='drag-drop-zone'; zone.textContent='soltar aquí'; zone.dataset.di=di;
+    const txt=document.createElement('div');
+    txt.className='drag-def-text'; txt.textContent=DRAG_PAIRS[di].def;
+
+    // Desktop drop
+    zone.addEventListener('dragover',e=>{ e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault(); zone.classList.remove('over');
+      const ti=parseInt(e.dataTransfer.getData('ti'),10);
+      placeTerm(zone,di,ti);
+    });
+    // Touch
+    zone.addEventListener('click',()=>handleZoneClick(zone,di));
+
+    row.appendChild(zone); row.appendChild(txt);
+    defsEl.appendChild(row);
+  });
+})();
+
+function handleTermClick(el,ti){
+  if(el.classList.contains('placed')) return;
+  if(dragSel===el){ el.classList.remove('touch-selected'); dragSel=null; return; }
+  document.querySelectorAll('.drag-term').forEach(t=>t.classList.remove('touch-selected'));
+  dragSel=el; el.classList.add('touch-selected');
+}
+
+function handleZoneClick(zone,di){
+  if(!dragSel) return;
+  const ti=parseInt(dragSel.dataset.ti,10);
+  placeTerm(zone,di,ti);
+  dragSel.classList.remove('touch-selected');
+  dragSel=null;
+}
+
+function placeTerm(zone,di,ti){
+  if(zone.classList.contains('ok')) return; // ya está correcto
+
+  // Si ya hay algo en la zona, devolver el anterior
+  if(zone.dataset.placed!==undefined){
+    const prevTi=parseInt(zone.dataset.placed,10);
+    const prevEl=document.querySelector(`.drag-term[data-ti="${prevTi}"]`);
+    if(prevEl){ prevEl.classList.remove('placed'); }
+    zone.innerHTML=''; zone.textContent='soltar aquí';
+    zone.className='drag-drop-zone'; delete zone.dataset.placed;
+    delete dragState[di];
+  }
+
+  const correct = (DRAG_PAIRS[ti].term === DRAG_PAIRS[di].term);
+  zone.dataset.placed=ti;
+  dragState[di]=ti;
+
+  // Mostrar el término en la zona
+  zone.innerHTML=`<span class="drag-term-placed">${DRAG_PAIRS[ti].term}</span>`;
+  zone.classList.add(correct?'ok':'fail','filled');
+
+  // Marcar el término como colocado
+  const termEl=document.querySelector(`.drag-term[data-ti="${ti}"]`);
+  if(termEl) termEl.classList.add('placed');
+
+  // Si es incorrecto, devolver después de un momento
+  if(!correct){
+    setTimeout(()=>{
+      zone.innerHTML=''; zone.textContent='soltar aquí';
+      zone.className='drag-drop-zone'; delete zone.dataset.placed;
+      delete dragState[di];
+      if(termEl) termEl.classList.remove('placed');
+    },1000);
+  }
+
+  // Verificar si todo está completo
+  checkDragComplete();
+}
+
+function checkDragComplete(){
+  const correctCount = Object.entries(dragState).filter(([di,ti])=>DRAG_PAIRS[ti].term===DRAG_PAIRS[parseInt(di)].term).length;
+  if(correctCount===DRAG_PAIRS.length){
+    secCompleted.D=true; updateGlobalProgress();
+  }
+}
+
+function getDragScore(){
+  return Object.entries(dragState).filter(([di,ti])=>DRAG_PAIRS[ti].term===DRAG_PAIRS[parseInt(di)].term).length * (20/DRAG_PAIRS.length);
+}
+
+/* ══ TEMPORIZADOR ══════════════════════════════════════ */
+let secs=50*60;
+const tEl=document.getElementById('timer');
+const iv=setInterval(()=>{
+  secs--;
+  const m=String(Math.floor(secs/60)).padStart(2,'0');
+  const s=String(secs%60).padStart(2,'0');
+  tEl.textContent=`⏱ ${m}:${s}`;
+  if(secs<=300&&secs>120) tEl.className='warn';
+  if(secs<=120) tEl.className='danger';
+  if(secs<=0){ clearInterval(iv); calificarTodo(true); }
+},1000);
+
+/* ══ CALIFICAR TODO ════════════════════════════════════ */
+async function calificarTodo(timedOut=false){
+  clearInterval(iv);
+
+  /* ── SECCIÓN A ── */
+  let aCorr=0; const aDetalle=[];
+  const bdRows=document.getElementById('bd-rows'); bdRows.innerHTML='';
+  let num=1;
+  for(const [key,correctVal] of Object.entries(A_ANSWERS)){
+    const sel=document.querySelector(`input[name="${key}"]:checked`);
+    const sv=sel?sel.value:null; const ok=sv===correctVal;
+    if(ok) aCorr++;
+    const row=document.createElement('div'); row.className='bd-row';
+    row.innerHTML=`
+      <span class="bd-num">${String(num).padStart(2,'0')}</span>
+      <span class="bd-text">
+        ${A_LABELS[key]}
+        <div class="bd-sel">Tu respuesta: ${sv?A_OPTS[key][sv]:'<em>Sin responder</em>'}</div>
+        ${!ok?`<div class="bd-ans">✓ Correcta: ${A_OPTS[key][correctVal]}</div>`:''}
+      </span>
+      <span class="bd-status ${ok?'ok':'fail'}">${ok?'✓':'✗'}</span>`;
+    bdRows.appendChild(row); num++;
+    aDetalle.push(`A${num-1}(${ok?'✓':'✗'}):${sv?A_OPTS[key][sv]:'—'}`);
+  }
+  const scoreA = aCorr * 5; // 6 * 5 = 30
+
+  /* ── SECCIÓN B ── */
+  let bCorr=0; const bDetalle=[];
+  for(let i=1;i<=6;i++){
+    const inp=document.getElementById(`b${i}`);
+    const val=(inp?.value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const accepted=B_ANSWERS[`b${i}`].map(a=>a.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''));
+    const ok=accepted.some(a=>val===a||val.includes(a)||a.includes(val));
+    if(inp){ inp.classList.add(ok?'ok':'fail'); }
+    if(ok) bCorr++;
+    bDetalle.push(`B${i}(${ok?'✓':'✗'}):"${inp?.value||'—'}"`);
+  }
+  const scoreB = bCorr * 5; // 6 * 5 = 30
+
+  /* ── SECCIÓN C ── */
+  const scoreC = memPares===MEM_PAIRS.length ? memScore : Math.round(memPares/MEM_PAIRS.length*20);
+
+  /* ── SECCIÓN D ── */
+  const scoreD = Math.round(getDragScore());
+
+  const total = scoreA + scoreB + scoreC + scoreD;
+  const nombre=document.getElementById('fn').value.trim()||'Sin nombre';
+  const grupo =document.getElementById('fg').value.trim();
+  const materia=document.getElementById('fm').value.trim();
+  const fecha =document.getElementById('ff').value;
+
+  /* ── MOSTRAR RESULTADO ── */
+  document.getElementById('res-score').textContent=total;
+  document.getElementById('res-pct').textContent=`${total}/100 puntos${timedOut?' · Tiempo agotado':''}`;
+  document.getElementById('res-name').textContent=nombre;
+  document.getElementById('res-meta').textContent=[grupo,materia,fecha].filter(Boolean).join(' · ');
+
+  const rk=document.getElementById('res-rank');
+  if     (total>=90){rk.className='result-rank rank-s';rk.textContent='★ EXCELENTE';}
+  else if(total>=70){rk.className='result-rank rank-a';rk.textContent='▲ MUY BIEN';}
+  else if(total>=50){rk.className='result-rank rank-b';rk.textContent='● SUFICIENTE';}
+  else              {rk.className='result-rank rank-c';rk.textContent='▼ A REPASAR';}
+
+  // Puntaje por sección
+  const secsData=[
+    {id:'A',sc:scoreA,max:30},
+    {id:'B',sc:scoreB,max:30},
+    {id:'C',sc:scoreC,max:20},
+    {id:'D',sc:scoreD,max:20}
+  ];
+  secsData.forEach(({id,sc,max})=>{
+    document.getElementById(`sc-${id}`).textContent=`${sc}/${max}`;
+    document.getElementById(`sf-${id}`).style.width=(sc/max*100)+'%';
+  });
+
+  // Infracciones
+  const iBlock=document.getElementById('infraction-block');
+  if(infractions.length>0){
+    iBlock.innerHTML=`<div style="background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius);padding:14px 18px;">
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;font-weight:600;">⚠ Infracciones — ${infractions.length}</div>
+      ${infractions.map(x=>`<div style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid rgba(245,158,11,.15);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--yellow);">${x.t}</span> — ${x.msg}</div>`).join('')}
+    </div>`;
+  } else {
+    iBlock.innerHTML=`<div style="background:var(--green-bg);border:1px solid var(--green);border-radius:var(--radius);padding:12px 18px;font-size:13px;color:var(--green);">✓ Sin infracciones durante la evaluación.</div>`;
+  }
+
+  // Despedida
+  const farewells=[
+    { q:'La tecnología es solo una herramienta. Lo que importa es lo que hacemos con ella.', a:'— Nicholas Negroponte',
+      m:'Llegaste al final de este recursamiento. Cuatro sesiones, cuatro oportunidades de volver a construir lo que no había quedado claro. <strong>Eso requiere valentía.</strong> Ahora sabes que el software libre no es solo un tipo de programa — es una postura ante la tecnología. Que investigar no es buscar — es evaluar, comparar y decidir. Que los números solos no dicen nada sin la pregunta correcta. Llevas eso contigo.' },
+    { q:'Aprender es cambiar. El conocimiento es una experiencia que hace la diferencia.', a:'— Leo Buscaglia',
+      m:'Este curso te pidió algo más difícil que memorizar definiciones: te pidió que pensaras diferente sobre las herramientas que usas todos los días. <strong>¿Realmente elegimos las plataformas que usamos?</strong> ¿Leemos antes de aceptar? ¿Verificamos antes de compartir? Si ahora te haces esas preguntas, el recursamiento cumplió su propósito.' },
+    { q:'Nunca consideres el estudio como una obligación, sino como una oportunidad para penetrar en el bello y maravilloso mundo del saber.', a:'— Albert Einstein',
+      m:'Completaste la evaluación final. Independientemente del número en pantalla, <strong>el proceso de volver a intentarlo ya fue una decisión valiosa.</strong> La cultura digital no se aprende de una vez — se practica cada vez que eliges informarte bien, trabajar honestamente con otros y usar herramientas que respetan tu privacidad. Sigue eligiendo así.' }
+  ];
+  const fw=farewells[Math.floor(Math.random()*farewells.length)];
+  document.getElementById('farewell-quote').textContent=fw.q;
+  document.getElementById('farewell-author').textContent=fw.a;
+  document.getElementById('farewell-msg').innerHTML=fw.m;
+
+  document.getElementById('result-panel').style.display='block';
+  document.getElementById('result-panel').scrollIntoView({behavior:'smooth',block:'start'});
+
+  /* ── ENVIAR A SHEETS ── */
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true; btn.textContent='⏳ Enviando…';
+
+  const infrTxt=infractions.length>0
+    ? infractions.map(x=>`${x.t}:${x.msg}`).join('|')
+    : 'Sin infracciones';
+
+  const ok=await enviarASheets({
+    nombre, grupo, materia,
+    sesion:   'Sesión 4 — Evaluación Final',
+    cal:      total,
+    correctas:`A:${scoreA}/30 B:${scoreB}/30 C:${scoreC}/20 D:${scoreD}/20`,
+    infr:     infractions.length,
+    detalle:  `INFRACCIONES:${infrTxt}||RESP_A:${aDetalle.join('|')}||RESP_B:${bDetalle.join('|')}`,
+    obs:      `Secciones: A=${scoreA}/30 B=${scoreB}/30 C=${scoreC}/20 D=${scoreD}/20. Pares memoria=${memPares}/${MEM_PAIRS.length} en ${memIntents} intentos. Drag correctos=${Math.round(getDragScore()/(20/DRAG_PAIRS.length))}/${DRAG_PAIRS.length}`
+  });
+
+  const st=document.getElementById('send-status');
+  if(ok){ st.className='send-status ok'; st.textContent='✓ Resultado registrado en el concentrado del docente.'; btn.textContent='✓ Registrado'; }
+  else  { st.className='send-status fail'; st.textContent='⚠ Sin conexión. Muestra el resultado al docente.'; btn.disabled=false; btn.textContent='📤 Reintentar'; }
+}
+
+/* ══ TEMA ══════════════════════════════════════════════ */
+function toggleTheme(){
+  const h=document.documentElement; const dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('theme-toggle').textContent=dark?'☀️':'🌙';
+  try{ localStorage.setItem('ev-theme',dark?'light':'dark'); }catch(e){}
+}
+(function(){
+  try{ const t=localStorage.getItem('ev-theme'); if(t){ document.documentElement.setAttribute('data-theme',t); document.getElementById('theme-toggle').textContent=t==='dark'?'☀️':'🌙'; } }catch(e){}
+})();
+
+/* ══ FECHA Y MARCA DE AGUA ═════════════════════════════ */
+const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
+document.getElementById('fecha-hoy').textContent=fecha;
+document.getElementById('ff').value=new Date().toISOString().split('T')[0];
+(function(){
+  const w=document.getElementById('wmInner');
+  for(let i=0;i<60;i++){ const s=document.createElement('span'); s.className='wm-text'; s.textContent='CULTURA DIGITAL II'; w.appendChild(s); }
+})();
+</script>
+</body>
+</html>
